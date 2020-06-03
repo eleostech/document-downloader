@@ -10,6 +10,10 @@ We are introducing a REST API (documented here: <https://test-dev.eleostech.com/
 
 We need a replacement for the .BAT file that can be run/scheduled by the customer on a computer of their choosing, which will fetch any queued documents from our API and download them to the local filesystem, to a given folder.
 
+An example is worth a lot of words. Here's the package (.BAT script plus some documentation) we provide today: <https://s3.amazonaws.com/drive-axle-integration/DriveAxleClientScript.zip>
+
+(This relies on an email/password authentication scheme, which is going away in favor of the API key.)
+
 ## Facts that constrain the solution
 
 1. Most of the document management systems support monitoring a folder and automatically ingesting any document(s) that appear in that folder. Therefore, downloading the documents into a given folder is sufficient.
@@ -20,5 +24,7 @@ We need a replacement for the .BAT file that can be run/scheduled by the custome
 6. Many people run comically old versions of Windows Server. Windows Server 2012 is probably the oldest common one.
 
 Given everything above, PowerShell 4.0 (https://docs.microsoft.com/en-us/previous-versions/powershell/module/microsoft.powershell.utility/invoke-webrequest?view=powershell-4.0) seems like the right tool. It's well-supported across a variety of Windows versions, it lets people who need to tweak the script do so easily without a compilation environment, and it has built-in support for HTTP calls
+
+## Let's build it
 
 Other than that, build the script _you'd_ want if you needed something that worked reliably, failed obviously, and was easy to understand and modify at 10pm on a Friday when a co-worker calls you, panicked, because they are not getting new documents from "The Eleos."
