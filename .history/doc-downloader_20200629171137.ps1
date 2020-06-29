@@ -73,7 +73,7 @@ do {
         $queuedDoc = Invoke-WebRequest -Uri $redirect -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
         $downloadURI = $queuedDoc.Headers["Location"];
         WriteToLog ("Downloading Document from " + $DOWNLOAD_URI)
-        $filename = queuedDoc.Headers["Content-Disposition"];
+        $filename = queuedDoc.Headers[""]
         wget $downloadURI -OutFile $DESTINATION_PATH/$filename
         $removeDoc = Invoke-WebRequest -Uri $REDIRECT -Method DELETE -Headers $HEADERS
         If ($removeDoc.StatusCode -eq 200)

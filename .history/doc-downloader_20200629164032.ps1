@@ -5,7 +5,7 @@
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false; # If Drive Axle Hub Customer - this value should be $true, otherwise $false
-$API_KEY = "placeholder";
+$API_KEY = "Eepv+BdqqMjFKIY7CUsL93dp4ILhhyrurjiQLuysjfu6D2PhhA==";
 
 $DESTINATION_PATH = "C:\Eleos\"; # Desired destination folder for the downloaded files
 
@@ -39,7 +39,7 @@ function GetDocument
 {
     $GetNext = $BASE_URI + "/api/v1/documents/queued/next";
     WriteToLog ("Calling $GetNext")
-    $response = Invoke-WebRequest -Uri $GetNext -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+    $response = iwr -Uri $GetNext -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
     
     return $response;
 }
@@ -69,13 +69,13 @@ do {
     If ($response.StatusCode -eq 302)
     {
         WriteToLog ("Found Document in Queue...")
-        $redirect = $BASE_URI + $response.Headers["Location"];
-        $queuedDoc = Invoke-WebRequest -Uri $redirect -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
-        $downloadURI = $queuedDoc.Headers["Location"];
+        $REDIRECT = $BASE_URI + $response.Headers["Location"];
+        $r = iwr -Uri $REDIRECT -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+        $DOWNLOAD_URI = $r.Headers["Location"];
         WriteToLog ("Downloading Document from " + $DOWNLOAD_URI)
-        $filename = queuedDoc.Headers["Content-Disposition"];
-        wget $downloadURI -OutFile $DESTINATION_PATH/$filename
-        $removeDoc = Invoke-WebRequest -Uri $REDIRECT -Method DELETE -Headers $HEADERS
+        $filename = $(((Get-Date).ToUniversalTime()).ToString("yyyyMMdd_HHmmss")) + ".zip"
+        wget $DOWNLOAD_URI -OutFile $DESTINATION_PATH/$filename
+        $removeDoc = iwr -Uri $REDIRECT -Method DELETE -Headers $HEADERS
         If ($removeDoc.StatusCode -eq 200)
         {
             WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n")

@@ -74,6 +74,8 @@ do {
         $downloadURI = $queuedDoc.Headers["Location"];
         WriteToLog ("Downloading Document from " + $DOWNLOAD_URI)
         $filename = queuedDoc.Headers["Content-Disposition"];
+        Write-Host $filename
+        $filename = $(((Get-Date).ToUniversalTime()).ToString("yyyyMMdd_HHmmss")) + ".zip"
         wget $downloadURI -OutFile $DESTINATION_PATH/$filename
         $removeDoc = Invoke-WebRequest -Uri $REDIRECT -Method DELETE -Headers $HEADERS
         If ($removeDoc.StatusCode -eq 200)

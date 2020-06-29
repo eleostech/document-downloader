@@ -71,10 +71,10 @@ do {
         WriteToLog ("Found Document in Queue...")
         $redirect = $BASE_URI + $response.Headers["Location"];
         $queuedDoc = Invoke-WebRequest -Uri $redirect -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
-        $downloadURI = $queuedDoc.Headers["Location"];
+        $DOWNLOAD_URI = $queuedDoc.Headers["Location"];
         WriteToLog ("Downloading Document from " + $DOWNLOAD_URI)
-        $filename = queuedDoc.Headers["Content-Disposition"];
-        wget $downloadURI -OutFile $DESTINATION_PATH/$filename
+        $filename = queuedDoc.Headers[""]
+        wget $DOWNLOAD_URI -OutFile $DESTINATION_PATH/$filename
         $removeDoc = Invoke-WebRequest -Uri $REDIRECT -Method DELETE -Headers $HEADERS
         If ($removeDoc.StatusCode -eq 200)
         {
