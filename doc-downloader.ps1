@@ -58,7 +58,7 @@ if(-not (Test-Path $DESTINATION_PATH))
 
 # Creates Timestamp for LOG file
 $CurrentTime = CreateTimestamp;
-WriteToLog ("`r`nScript Exectuted at: " + $CurrentTime + "`r`n")
+WriteToLog ("`r`nScript Executed at: " + $CurrentTime + "`r`n")
 
 # Starts Timer for LOG file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew();
