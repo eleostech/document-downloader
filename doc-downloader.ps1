@@ -75,7 +75,7 @@ do {
         WriteToLog ("Downloading Document from " + $DOWNLOAD_URI)
         $filename = queuedDoc.Headers["Content-Disposition"];
         wget $downloadURI -OutFile $DESTINATION_PATH/$filename
-        $removeDoc = Invoke-WebRequest -Uri $REDIRECT -Method DELETE -Headers $HEADERS
+        $removeDoc = Invoke-WebRequest -Uri $redirect -Method DELETE -Headers $HEADERS
         If ($removeDoc.StatusCode -eq 200)
         {
             WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n")
