@@ -43,7 +43,18 @@ function GetDocument
     
     return $response;
 }
+#This Function implements the exponential retry method in the case of a failure on delete request
+function ExpWait
+{param([string]$URI, [string]$HDRS, [int32]$Curr_Backfoff)
+    $MAX_BACKOFF = 32
+    if($Curr_Backoff -ge $MAX_BACKOFF){exit}
 
+    $response = Invoke-WebRequest -Uri $redirect -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+    If ($response.StatusCode -eq 200){return $response.StatusCode}
+    Else {
+        ExpWait($URI, $HDRS, $Curr_Backfoff * $Curr_Backfoff)
+    }
+}
 #----------------------------------------------------------------------------------------------------------
 
 # Creates LOG File
