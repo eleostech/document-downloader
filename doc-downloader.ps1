@@ -44,6 +44,30 @@ function GetDocument
     return $response;
 }
 
+#This Function implements the exponential retry method in the case of a failure on delete request
+function ExpWait
+{param([string]$URI, [string]$HDRS, [int32]$Curr_Backfoff)
+    $MAX_BACKOFF = 32
+    if($Curr_Backfoff -ge $MAX_BACKOFF){
+    WriteToLog ("Process failed after  " + $Curr_Backfoff + "s " + "`r`n")
+      return $response.StatusCode
+    }
+
+    #generates random amount of miliseconds to wait
+    $rand_milisec = (Get-Random -Maximum 5000 + 1)/1000
+
+    #Wait time before retrying 
+    $Curr_Backfoff += $rand_milisec
+
+    Start-Sleep -Seconds $Curr_Backfoff
+
+    $response = Invoke-WebRequest -Uri $redirect -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+    If ($response.StatusCode -eq 200){return $response.StatusCode}
+    Else {
+        WriteToLog ("Error Removing Document: Response returned " + $repsonse.StatusCode + ". Tried after " + $Curr_Backfoff + " seconds " + "`r`n")
+        ExpWait($URI, $HDRS, $Curr_Backfoff * $Curr_Backfoff)
+    }
+}
 #----------------------------------------------------------------------------------------------------------
 
 # Creates LOG File
@@ -81,7 +105,9 @@ do {
             WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n")
         }
         Else {
-            WriteToLog ("Error Removing Document: Response returned " + $removeDoc.StatusCode + "`r`n")
+            $retry = ExpWait($redirect,  $HEADERS,  [int32]1)
+            WriteToLog ("Error Removing Document: Response returned " + $retry + "`r`n")
+            
         }
     }
     Else
