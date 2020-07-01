@@ -35,7 +35,7 @@ function CheckDirectory
 #----------------------------------------------------------------------------------------------------------
 
 function GetNextDoc
-{ param([string]$URI, [hashtable]$HEADERS, [string]$file)
+{ param([string]$URI, [hashtable]$HEADERS)
 
     $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
     
