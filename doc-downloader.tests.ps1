@@ -39,6 +39,7 @@ Describe "Consume API Function Tests" {
          it 'GetNextDoc should return a 500 if there is a server error' {
             $request  =  $baseURI + '/api/v1/documents/queued/next/badserver'
             $response = GetNextDoc $request $HEADERS
+
             }
         }
     Context 'Testing GetDocFromQueue function' {
@@ -47,7 +48,8 @@ Describe "Consume API Function Tests" {
             $response | should be $true
         }
         it 'GetDocFromQueue should return a 404 if document could not be found' {
-            $response = $true
+            $request = $baseURI + '/api/v1/documents/queued/2'
+            $response = GetNextDoc $request $HEADERS
             $response | should be $true
         }
     }

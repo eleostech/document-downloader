@@ -24,8 +24,49 @@ $BASE_URI = "https://squid-fortress-staging.eleostech.com"
 # Functions
 #----------------------------------------------------------------------------------------------------------
 
+<<<<<<< HEAD
 # Functions are defined in doc-downloader.functions.ps1
 
+=======
+function CreateTimestamp
+{
+    $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
+    return $Timestamp;
+}
+
+function CreateLogFile 
+{
+    $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
+    return $CurrentTime;
+}
+
+function WriteToLog
+{ param([string]$TextToWrite)
+    
+    $TextToWrite | Out-File $LOG_FILE -Append;
+}
+
+function GetDocument
+{
+    $GetNext = $BASE_URI + "/api/v1/documents/queued/next";
+    WriteToLog ("Calling $GetNext")
+    $response = Invoke-WebRequest -Uri $GetNext -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+    
+    return $response;
+}
+#This Function implements the exponential retry method in the case of a failure on delete request
+function ExpWait
+{param([string]$URI, [string]$HDRS, [int32]$Curr_Backfoff)
+    $MAX_BACKOFF = 32
+    if($Curr_Backoff -ge $MAX_BACKOFF){exit}
+
+    $response = Invoke-WebRequest -Uri $redirect -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+    If ($response.StatusCode -eq 200){return $response.StatusCode}
+    Else {
+        ExpWait($URI, $HDRS, $Curr_Backfoff * $Curr_Backfoff)
+    }
+}
+>>>>>>> 8f747267ae76f88fba9b5f2ee3d8de8e54cfc0ac
 #----------------------------------------------------------------------------------------------------------
 # Main Script
 #----------------------------------------------------------------------------------------------------------
