@@ -25,9 +25,12 @@ $BASE_URI = "https://squid-fortress-staging.eleostech.com"
 #----------------------------------------------------------------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Functions are defined in doc-downloader.functions.ps1
 
 =======
+=======
+>>>>>>> 85dae4fd4f749b054e9fad2c8bc149385ecb03e2
 function CreateTimestamp
 {
     $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
@@ -66,7 +69,14 @@ function ExpWait
         ExpWait($URI, $HDRS, $Curr_Backfoff * $Curr_Backfoff)
     }
 }
+<<<<<<< HEAD
 >>>>>>> 8f747267ae76f88fba9b5f2ee3d8de8e54cfc0ac
+=======
+=======
+# Functions are defined in doc-downloader.functions.ps1
+
+>>>>>>> corey
+>>>>>>> 85dae4fd4f749b054e9fad2c8bc149385ecb03e2
 #----------------------------------------------------------------------------------------------------------
 # Main Script
 #----------------------------------------------------------------------------------------------------------
@@ -91,7 +101,7 @@ do
     WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
     try 
     { 
-        $response = GetNextDoc $URI $HEADERS
+        $response = GetNextDoc $URI $HEADERS $LOG_FILE
         If ($response.StatusCode -eq 302)
         {
             WriteToLog "Found Document in Queue..." $LOG_FILE
