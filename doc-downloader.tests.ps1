@@ -34,7 +34,11 @@ Describe "Consume API Function Tests" {
         it 'GetNextDoc should return a 304 if there is not a document in the queue' {
             $request = $baseURI + '/api/v1/documents/queued/next'
             $response = GetNextDoc $request $HEADERS
-            $response.StatusCode | should be 304
+            $response | should not be $null
+            }
+         it 'GetNextDoc should return a 500 if there is a server error' {
+            $request  =  $baseURI + '/api/v1/documents/queued/next/badserver'
+            $response = GetNextDoc $request $HEADERS
             }
         }
     Context 'Testing GetDocFromQueue function' {
