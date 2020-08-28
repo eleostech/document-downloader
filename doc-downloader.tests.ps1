@@ -1,6 +1,13 @@
 $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 . $here\doc-downloader.functions.ps1
 
+$baseURI = 'https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io'
+
+$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) }
+$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY) }
+$HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
+
+
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateTimestamp should produce correct date and time' {
@@ -17,6 +24,7 @@ Describe "Helper Function Tests" {
     }
 }
 
+
 Describe "Consume API Function Tests" {
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
@@ -24,10 +32,11 @@ Describe "Consume API Function Tests" {
             $response | should be $true
         }
         it 'GetNextDoc should return a 304 if there is not a document in the queue' {
-            $response = $true
-            $response | should be $true
+            $request = $baseURI + '/api/v1/documents/queued/next'
+            $response = GetNextDoc $request $HEADERS
+            $response.StatusCode | should be 304
+            }
         }
-    }
     Context 'Testing GetDocFromQueue function' {
         it 'GetDocFromQueue should return a 302 with URL and filename to download document' {
             $response = $true

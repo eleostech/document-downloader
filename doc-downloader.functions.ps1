@@ -62,10 +62,13 @@ function ExpWait
 
 function GetNextDoc
 { param([string]$URI, [hashtable]$HEADERS)
-
-    $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
-    
-    return $response
+    try {
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue   
+        return $response     
+    }
+    catch {
+        $false
+        }
 }
 
 function GetDocFromQueue
