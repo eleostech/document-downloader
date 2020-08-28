@@ -10,7 +10,7 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
-$API_KEY = "Eepv+BdqqMjFKIY7CUsL93dp4ILhhyrurjiQLuysjfu6D2PhhA=="
+$API_KEY = "Placeholder"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
 
