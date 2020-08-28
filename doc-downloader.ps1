@@ -91,7 +91,7 @@ do
     WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
     try 
     { 
-        $response = GetNextDoc $URI $HEADERS
+        $response = GetNextDoc $URI $HEADERS $LOG_FILE
         If ($response.StatusCode -eq 302)
         {
             WriteToLog "Found Document in Queue..." $LOG_FILE
