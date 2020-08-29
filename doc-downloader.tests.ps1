@@ -19,6 +19,7 @@ Describe "Helper Function Tests" {
             $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
             mock -CommandName Get-Date -MockWith { $CurrentTime }
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
+            $result = CreateLogFile
             CreateLogFile | should be $filename
         }
     }
@@ -38,7 +39,8 @@ Describe "Consume API Function Tests" {
             }
          it 'GetNextDoc should return a 500 if there is a server error' {
             $request  =  $baseURI + '/api/v1/documents/queued/next/badserver'
-            $response = GetNextDoc $request $HEADERS
+            $response = GetNextDoc $request $HEADERS "Logfile.txt"
+            $response | should be $false
 
             }
         }
@@ -49,7 +51,7 @@ Describe "Consume API Function Tests" {
         }
         it 'GetDocFromQueue should return a 404 if document could not be found' {
             $request = $baseURI + '/api/v1/documents/queued/2'
-            $response = GetNextDoc $request $HEADERS
+            $response = GetNextDoc $request $HEADERS "Logfile.txt"
             $response | should be $true
         }
     }

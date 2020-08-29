@@ -13,6 +13,7 @@ $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, 
 $API_KEY = "Placeholder"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
+$LOG_DIR = "C:\Eleos\Logs\"
 
 $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) }
 $ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY) }
@@ -24,30 +25,8 @@ $BASE_URI = "https://squid-fortress-staging.eleostech.com"
 # Functions
 #----------------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 # Functions are defined in doc-downloader.functions.ps1
 
-=======
-=======
->>>>>>> 85dae4fd4f749b054e9fad2c8bc149385ecb03e2
-function CreateTimestamp
-{
-    $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
-    return $Timestamp;
-}
-
-function CreateLogFile 
-{
-    $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
-    return $CurrentTime;
-}
-
-function WriteToLog
-{ param([string]$TextToWrite)
-    
-    $TextToWrite | Out-File $LOG_FILE -Append;
-}
 
 function GetDocument
 {
@@ -57,6 +36,7 @@ function GetDocument
     
     return $response;
 }
+
 #This Function implements the exponential retry method in the case of a failure on delete request
 function ExpWait
 {param([string]$URI, [string]$HDRS, [int32]$Curr_Backfoff)
@@ -69,23 +49,17 @@ function ExpWait
         ExpWait($URI, $HDRS, $Curr_Backfoff * $Curr_Backfoff)
     }
 }
-<<<<<<< HEAD
->>>>>>> 8f747267ae76f88fba9b5f2ee3d8de8e54cfc0ac
-=======
-=======
-# Functions are defined in doc-downloader.functions.ps1
 
->>>>>>> corey
->>>>>>> 85dae4fd4f749b054e9fad2c8bc149385ecb03e2
 #----------------------------------------------------------------------------------------------------------
 # Main Script
 #----------------------------------------------------------------------------------------------------------
 
-# Creates LOG File
-Set-Variable LOG_FILE (CreateLogFile) -Option ReadOnly -Force
-
 # Checks and Creates Directory if it does not exist
 CheckDirectory $DESTINATION_PATH
+CheckDirectory $LOG_DIR 
+
+# Creates LOG File
+Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
 
 # Creates Timestamp for LOG file
 $Timestamp = CreateTimestamp
@@ -96,11 +70,9 @@ $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 
 do 
 {
-
-    $URI = $BASE_URI + "/api/v1/documents/queued/next"
     WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
-    try 
-    { 
+    $URI = $BASE_URI + "/api/v1/documents/queued/next"
+    try{ 
         $response = GetNextDoc $URI $HEADERS $LOG_FILE
         If ($response.StatusCode -eq 302)
         {
@@ -135,7 +107,7 @@ do
     }
     catch [System.Net.WebException]
     {
-        WriteToLog ("An exception has occured: " + $($_.Exception.Message) + "`r`n") $LOG_FILE
+        WriteToLog ("An exception has occured: " + $_.Exception.Message + "`r`n") $LOG_FILE
     }
 }
 while($response.StatusCode -eq 302)

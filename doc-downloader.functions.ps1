@@ -10,10 +10,14 @@ function CreateTimestamp
 
 function CreateLogFile
 {
-    $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
+    param([string]$Dir)
+    $CurrentTime = Get-Date -Format yyyy-MM-dd
     $filename = ("Eleos-" + ($CurrentTime + ".log"))
-
-    return $filename;
+    $filepath = ($DIR + $filename)
+    if((Test-Path $filepath) -ne $True){
+        New-Item -Path $filepath -ItemType File
+    }
+    return $filepath;
 }
 
 function WriteToLog
@@ -67,7 +71,7 @@ function GetNextDoc
         return $response
         }
         catch{
-            WriteToLog($_.Exception.Message,$LOGFILE)
+            WriteToLog $_.Exception.Message $LOG_FILE
             return $false
         }  
              
