@@ -10,7 +10,7 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
-$API_KEY = "Placeholder"
+$API_KEY = "Eepv+BdqqMjFKIY7CUsL93dp4ILhhyrurjiQLuysjfu6D2PhhA=="
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
 $LOG_DIR = "C:\Eleos\Logs\"
@@ -83,7 +83,7 @@ do
             WriteToLog ("Downloading Document from " + $DOWNLOAD_URI) $LOG_FILE
             $filename = queuedDoc.Headers["Content-Disposition"]
             wget $downloadURI -OutFile $DESTINATION_PATH/$filename
-            $removeDoc = RemoveDocFromQueue $redirect $HEADERS
+            $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc.StatusCode -eq 200)
             {
                 WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n") $LOG_FILE

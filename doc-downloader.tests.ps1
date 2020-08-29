@@ -3,6 +3,12 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
 $baseURI = 'https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io'
 
+$testfile = ($here + "\testlog.log")
+
+if((Test-Path $testfile) -ne $True){ 
+    New-Item -Path $testfile -ItemType File
+    }
+
 $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) }
 $ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY) }
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
@@ -51,8 +57,8 @@ Describe "Consume API Function Tests" {
         }
         it 'GetDocFromQueue should return a 404 if document could not be found' {
             $request = $baseURI + '/api/v1/documents/queued/2'
-            $response = GetNextDoc $request $HEADERS "Logfile.txt"
-            $response | should be $true
+            $response = GetNextDoc $request $HEADERS ""
+            $response | should be $false
         }
     }
     Context 'Testing RemoveDocFromQueue function' {
