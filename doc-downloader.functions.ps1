@@ -78,11 +78,15 @@ function GetNextDoc
 }
 
 function GetDocFromQueue
-{ param([string]$URI, [hashtable]$HEADERS)
-
-    $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
-    
-    return $response
+{ param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+    try{
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0
+        return $response
+    }
+    catch{
+        WriteToLog $_.Exception.Message $LOG_FILE
+        return $false
+    }
 }
 
 function RemoveDocFromQueue
