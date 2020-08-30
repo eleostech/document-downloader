@@ -35,7 +35,7 @@ function CheckDirectory
 }
 
 function ExpWait
-{ param([string]$URI, [hashtable]$HEADERS, [int32]$currBackoff)
+{ param([string]$URI, [hashtable]$HEADERS, [int32]$currBackoff, [string]$LOG_FILE)
     $MAX_BACKOFF = 32
     if($currBackoff -ge $MAX_BACKOFF){
     WriteToLog ("Process failed after  " + $currBackoff + "s " + "`r`n")
