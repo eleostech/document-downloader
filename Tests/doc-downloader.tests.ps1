@@ -1,5 +1,6 @@
 $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
-. $here\doc-downloader.functions.ps1
+$src = Split-Path -Path $here -Parent
+. $src\doc-downloader.functions.ps1
 
 $baseURI = 'https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io'
 
