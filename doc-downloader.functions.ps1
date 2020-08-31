@@ -76,8 +76,7 @@ function GetNextDoc
         catch{
             WriteToLog $_.Exception.Message $LOG_FILE
             return $false
-        }  
-             
+        }              
 }
 
 function GetDocFromQueue

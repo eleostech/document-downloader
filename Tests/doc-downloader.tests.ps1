@@ -26,7 +26,6 @@ Describe "Helper Function Tests" {
             $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
             mock -CommandName Get-Date -MockWith { $CurrentTime }
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
-            $result = CreateLogFile
             CreateLogFile | should be $filename
         }
     }
@@ -37,11 +36,11 @@ Describe "Consume API Function Tests" {
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $baseURI + '/api/v1/documents/queued/next'
-            $response = $true
-            $response | should be $true
+            $response = GetNextDoc $request $HEADERS $testfile
+            $response.StatusCode | should be 302
         }
         it 'GetNextDoc should return a 304 if there is not a document in the queue' {
-            $request = $baseURI + '/api/v1/documents/queued/next'
+            $request = $baseURI + '/api/v2/documents/queued/next'
             $response = GetNextDoc $request $HEADERS $testfile
             $response | should not be $null
             }
@@ -67,8 +66,9 @@ Describe "Consume API Function Tests" {
     }
     Context 'Testing RemoveDocFromQueue function' {
         it 'RemoveDocFromQueue should return a 200 if a document was successfully removed from the queue' {
-            $response = $true
-            $response | should be $true
+            $request = $baseURI + 'api/v1/documents/queued/1'
+            $response = RemoveDocFromQueue $request
+            $response.message | should be "Document Downloaded Successfully"
         }
         it 'RemoveDocFromQueue should return a 404 if the document to be removed could not be found' {
             $request = $baseURI + 'api/v1/documents/queued/2'
