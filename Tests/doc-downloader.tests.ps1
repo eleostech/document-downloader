@@ -66,12 +66,13 @@ Describe "Consume API Function Tests" {
     }
     Context 'Testing RemoveDocFromQueue function' {
         it 'RemoveDocFromQueue should return a 200 if a document was successfully removed from the queue' {
-            $request = $baseURI + 'api/v1/documents/queued/1'
-            $response = RemoveDocFromQueue $request
+            $request = $baseURI + '/api/v1/documents/queued/1'
+            $response = RemoveDocFromQueue $request $HEADERS $testfile
+            $response = $response | ConvertFrom-Json
             $response.message | should be "Document Downloaded Successfully"
         }
         it 'RemoveDocFromQueue should return a 404 if the document to be removed could not be found' {
-            $request = $baseURI + 'api/v1/documents/queued/2'
+            $request = $baseURI + '/api/v1/documents/queued/2'
             $response = RemoveDocFromQueue $request $HEADERS $testfile
             $response | should be $false
         }

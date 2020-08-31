@@ -98,6 +98,7 @@ function RemoveDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
         $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
+        return $response 
     }
     catch {
         WriteToLog $_.Exception.Message $LOG_FILE
