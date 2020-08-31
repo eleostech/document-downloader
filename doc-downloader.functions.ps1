@@ -67,7 +67,10 @@ function ExpWait
 function GetNextDoc
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+        if($ProcessError){
+            WriteToLog $ProcessError
+        }
         return $response
         }
         catch{
@@ -80,7 +83,10 @@ function GetNextDoc
 function GetDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+        if($ProcessError) {
+            WriteToLog $ProcessError
+        }
         return $response
     }
     catch{

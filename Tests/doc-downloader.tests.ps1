@@ -36,29 +36,32 @@ Describe "Helper Function Tests" {
 Describe "Consume API Function Tests" {
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
+            $request = $baseURI + '/api/v1/documents/queued/next'
             $response = $true
             $response | should be $true
         }
         it 'GetNextDoc should return a 304 if there is not a document in the queue' {
             $request = $baseURI + '/api/v1/documents/queued/next'
-            $response = GetNextDoc $request $HEADERS
+            $response = GetNextDoc $request $HEADERS $testfile
             $response | should not be $null
             }
          it 'GetNextDoc should return a 500 if there is a server error' {
             $request  =  $baseURI + '/api/v1/documents/queued/next/badserver'
-            $response = GetNextDoc $request $HEADERS "Logfile.txt"
+            $response = GetNextDoc $request $HEADERS $testfile
             $response | should be $false
 
             }
         }
     Context 'Testing GetDocFromQueue function' {
         it 'GetDocFromQueue should return a 302 with URL and filename to download document' {
-            $response = $true
-            $response | should be $true
+            $request = $baseURI + '/api/v1/documents/queued/3'
+            $response = GetDocFromQueue $request $HEADERS $testfile
+            $response = $response | ConvertFrom-Json
+            $response.document_identifier | should not be $null
         }
         it 'GetDocFromQueue should return a 404 if document could not be found' {
             $request = $baseURI + '/api/v1/documents/queued/2'
-            $response = GetNextDoc $request $HEADERS ""
+            $response = GetDocFromQueue $request $HEADERS $testfile
             $response | should be $false
         }
     }
@@ -68,8 +71,9 @@ Describe "Consume API Function Tests" {
             $response | should be $true
         }
         it 'RemoveDocFromQueue should return a 404 if the document to be removed could not be found' {
-            $response = $true
-            $response | should be $true
+            $request = $baseURI + 'api/v1/documents/queued/2'
+            $response = RemoveDocFromQueue $request $HEADERS $testfile
+            $response | should be $false
         }
     }
 }
