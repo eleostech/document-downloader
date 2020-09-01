@@ -58,7 +58,7 @@ do
             $filename = $queuedDoc.Headers["Content-Disposition"]
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
-            WriteToLog ("Downloading Document from " + $DOWNLOAD_URI) $LOG_FILE
+            WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             wget $downloadURI -OutFile $DESTINATION_PATH/$filename
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc.StatusCode -eq 200)
