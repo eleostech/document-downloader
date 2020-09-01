@@ -38,7 +38,7 @@ function ExpWait
 { param([string]$URI, [hashtable]$HEADERS, [int32]$currBackoff, [string]$LOG_FILE)
     $MAX_BACKOFF = 32
     if($currBackoff -ge $MAX_BACKOFF){
-    WriteToLog ("Process failed after  " + $currBackoff + "s " + "`r`n")
+    WriteToLog ("Process failed after  " + $currBackoff + "s " + "`r`n") $LOG_FILE
       return $response.StatusCode
     }
 
@@ -55,8 +55,8 @@ function ExpWait
         return $response.StatusCode
     }
     Else {
-        WriteToLog ("Error Removing Document: Response returned " + $repsonse.StatusCode + ". Tried after " + $currBackoff + " seconds " + "`r`n")
-        ExpWait($URI, $HEADERS, $currBackoff * $currBackoff)
+        WriteToLog ("Error Removing Document: Response returned " + $repsonse.StatusCode + ". Tried after " + $currBackoff + " seconds " + "`r`n") $LOG_FILE
+        ExpWait($URI, $HEADERS, $currBackoff * $currBackoff, $LOG_FILE)
     }
 }
 
@@ -66,42 +66,23 @@ function ExpWait
 
 function GetNextDoc
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    try{
+   # try{
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
         if($ProcessError){
             WriteToLog $ProcessError
         }
-        return $response
-        }
-        catch{
-            WriteToLog $_.Exception.Message $LOG_FILE
-            return $false
-        }              
+        return $response          
 }
 
 function GetDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    try{
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-        if($ProcessError) {
-            WriteToLog $ProcessError
-        }
         return $response
-    }
-    catch{
-        WriteToLog $_.Exception.Message $LOG_FILE
-        return $false
-    }
+
 }
 
 function RemoveDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    try{
         $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
         return $response 
-    }
-    catch {
-        WriteToLog $_.Exception.Message $LOG_FILE
-        return $false
-    }
 }
