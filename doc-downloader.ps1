@@ -20,7 +20,6 @@ $ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY) }
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 $BASE_URI = "https://squid-fortress-staging.eleostech.com"
-
 #----------------------------------------------------------------------------------------------------------
 # Functions
 #----------------------------------------------------------------------------------------------------------
@@ -55,10 +54,11 @@ do
         {
             WriteToLog "Found Document in Queue..." $LOG_FILE
             $redirect = $BASE_URI + $response.Headers["Location"]
-            $queuedDoc = GetDocFromQueue $redirect $HEADERS
-            $downloadURI = $queuedDoc.Headers["Location"]
+            $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
+            $filename = $queuedDoc.Headers["Content-Disposition"]
+            $queuedDoc = $queuedDoc | ConvertFrom-Json
+            $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $DOWNLOAD_URI) $LOG_FILE
-            $filename = queuedDoc.Headers["Content-Disposition"]
             wget $downloadURI -OutFile $DESTINATION_PATH/$filename
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc.StatusCode -eq 200)
