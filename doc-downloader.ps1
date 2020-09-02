@@ -60,6 +60,7 @@ do
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             wget $downloadURI -OutFile $DESTINATION_PATH/$filename
+            
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc.StatusCode -eq 200)
             {
@@ -68,7 +69,7 @@ do
             Else 
             {
                 WriteToLog ("Error Removing Document: Response returned " + $removeDoc.StatusCode + ". Trying again... `r`n") $LOG_FILE
-                $retry = ExpWait $redirect $HEADERS 1
+                $retry = ExpWait $redirect $HEADERS 1.000 $LOG_FILE
                 If($retry -eq 200){
                     WriteToLog ("Document Removed from Queue with Status Code: " + $retry + "`r`n") $LOG_FILE 
                 }
@@ -81,6 +82,7 @@ do
         {
             WriteToLog ("No Documents in Queue: Response returned " + $response.StatusCode + "`r`n") $LOG_FILE
         }
+        #>
     }
     catch [System.Net.WebException]
     {
