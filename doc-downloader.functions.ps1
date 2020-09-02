@@ -35,29 +35,30 @@ function CheckDirectory
 }
 
 function ExpWait
-{ param([string]$URI, [hashtable]$HEADERS, [int32]$currBackoff, [string]$LOG_FILE)
-    $MAX_BACKOFF = 32
-    if($currBackoff -ge $MAX_BACKOFF){
-    WriteToLog ("Process failed after  " + $currBackoff + "s " + "`r`n") $LOG_FILE
-      return $response.StatusCode
-    }
+{ param([string]$URI, [hashtable]$HEADERS, [double]$currBackoff, [string]$LOG_FILE)
+    $MAX_BACKOFF = 32 -as [double]
+    while($currBackoff -le $MAX_BACKOFF){
+        #generates random amount of miliseconds to wait
+        $rand_milisec = ((Get-Random -Maximum 3000) + 1)/1000
 
-    #generates random amount of miliseconds to wait
-    $rand_milisec = ((Get-Random -Maximum 3000) + 1)/1000
+        #Wait time before retrying 
+        $currBackoff += $rand_milisec
 
-    #Wait time before retrying 
-    $currBackoff += $rand_milisec
+        Start-Sleep -Seconds $currBackoff
 
-    Start-Sleep -Seconds $currBackoff
+        $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
 
-    $response = RemoveDocFromQueue $URI $HEADERS
-    If ($response.StatusCode -eq 200){
-        return $response.StatusCode
-    }
-    Else {
+        If ($response.StatusCode -eq 200){
+            return $response.StatusCode
+        }
+
         WriteToLog ("Error Removing Document: Response returned " + $repsonse.StatusCode + ". Tried after " + $currBackoff + " seconds " + "`r`n") $LOG_FILE
-        ExpWait($URI, $HEADERS, $currBackoff * $currBackoff, $LOG_FILE)
+        
+        $currBackoff = [Math]::Pow($currBackoff,2)
     }
+
+    WriteToLog ("Process failed after  " + $currBackoff + "s " + "`r`n") $LOG_FILE
+    return $null
 }
 
 #----------------------------------------------------------------------------------------------------------
@@ -66,23 +67,31 @@ function ExpWait
 
 function GetNextDoc
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-   # try{
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
         if($ProcessError){
             WriteToLog $ProcessError
         }
-        return $response          
+        return $response       
 }
 
 function GetDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+         if($ProcessError){
+            WriteToLog $ProcessError
+        }
         return $response
 
 }
 
 function RemoveDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+       try{
         $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
         return $response 
+        }
+        catch {
+            WriteToLog $_.Exception.Message $LOG_FILE
+            return $null
+        }
 }
