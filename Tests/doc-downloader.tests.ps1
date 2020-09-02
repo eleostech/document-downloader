@@ -84,3 +84,5 @@ Describe "Consume API Function Tests" {
     }
           
 }
+
+Remove-Item "C:\Eleos\*.log"
