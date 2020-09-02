@@ -26,7 +26,7 @@ Describe "Helper Function Tests" {
             $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
             mock -CommandName Get-Date -MockWith { $CurrentTime }
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
-            CreateLogFile | should be $filename
+            CreateLogFile "C:\Eleos\" | should be $filename
         }
     }
 }
