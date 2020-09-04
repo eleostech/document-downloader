@@ -57,7 +57,7 @@ function ExpWait
         $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
 
         If ($response.StatusCode -eq 200){
-            return $response.StatusCode
+            return $response
         }
 
         WriteToLog ("Error Removing Document: Response returned " + $repsonse.StatusCode + ". Tried after " + $currBackoff + " seconds " + "`r`n") $LOG_FILE
@@ -102,4 +102,11 @@ function RemoveDocFromQueue
             WriteToLog $_.Exception.Message $LOG_FILE
             return $null
         }
+}
+
+function  MakeHttpGetCall
+{
+    param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+    $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
+    return $response
 }
