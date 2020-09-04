@@ -20,6 +20,14 @@ function CreateLogFile
     return $filepath;
 }
 
+function CreateDownloadFile 
+{
+    param([int32] $file_count)
+    $CurrentDate = Get-Date -Format yyyy-MM-dd
+    $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
+    return $filename
+} 
+
 function WriteToLog
 { param([string]$TextToWrite, [string]$file)
     
