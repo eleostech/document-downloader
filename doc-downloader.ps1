@@ -10,13 +10,16 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
-$API_KEY = "Eepv+BdqqMjFKIY7CUsL93dp4ILhhyrurjiQLuysjfu6D2PhhA=="
+$API_KEY = "***REMOVED***"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
 $LOG_DIR = "C:\Eleos\Logs\"
 
-$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) }
-$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY) }
+$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
+                         Accept = 'application/json'}
+
+$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
+                    Accept = 'application/json'}
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 $BASE_URI = "https://squid-fortress-staging.eleostech.com"
@@ -43,7 +46,7 @@ WriteToLog ("`r`nScript Executed at: " + $Timestamp + "`r`n") $LOG_FILE
 
 # Starts Timer for LOG file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
-
+$file_count = 0
 do 
 {
     WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
@@ -52,10 +55,11 @@ do
         $response = GetNextDoc $URI $HEADERS $LOG_FILE
         If ($response.StatusCode -eq 302)
         {
+            $file_count++
             WriteToLog "Found Document in Queue..." $LOG_FILE
             $redirect = $BASE_URI + $response.Headers["Location"]
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
-            $filename = $queuedDoc.Headers["Content-Disposition"]
+            $filename = CreateDownloadFile $file_count
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
@@ -82,7 +86,6 @@ do
         {
             WriteToLog ("No Documents in Queue: Response returned " + $response.StatusCode + "`r`n") $LOG_FILE
         }
-        #>
     }
     catch [System.Net.WebException]
     {
