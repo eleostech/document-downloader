@@ -65,7 +65,7 @@ do
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             wget $downloadURI -OutFile $DESTINATION_PATH/$filename
             
-            $removeDoc = RemoveDocFromQueue "https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io/api/v1/documents/queued/2" $HEADERS $LOG_FILE
+            $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc)
             {
                 WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n") $LOG_FILE
@@ -73,7 +73,7 @@ do
             Else 
             {
                 WriteToLog ("Error Removing Document: Response returned " + $removeDoc.StatusCode + ". Trying again... `r`n") $LOG_FILE
-                $retry = ExpWait "https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io/api/v1/documents/queued/2" $HEADERS 1.000 $LOG_FILE
+                $retry = ExpWait $redirect $HEADERS 1.000 $LOG_FILE
                 If($retry){
                     WriteToLog ("Document Removed from Queue with Status Code: " + $retry + "`r`n") $LOG_FILE 
                 }
