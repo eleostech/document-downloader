@@ -28,14 +28,11 @@ Describe "Helper Function Tests" {
             $path = "C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\"
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
             $filepath  = CreateLogFile $path
-            Test-Path $filepath | should be $true
-            Remove-Item $filepath 
+            Test-Path $filepath | should be $true 
         }
     }
 }
 
-
-Describe "Consume API Function Tests" {
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $BASE_URI + '/api/v1/documents/queued/next'
