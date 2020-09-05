@@ -42,30 +42,23 @@ function CheckDirectory
     }
 }
 
-function ExpWait
-{ param([string]$URI, [hashtable]$HEADERS, [double]$currBackoff, [string]$LOG_FILE)
-    $MAX_BACKOFF = 32 -as [double]
-    while($currBackoff -le $MAX_BACKOFF){
-        #generates random amount of miliseconds to wait
-        $rand_milisec = ((Get-Random -Maximum 3000) + 1)/1000
-
-        #Wait time before retrying 
-        $currBackoff += $rand_milisec
-
-        Start-Sleep -Seconds $currBackoff
-
-        $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
-
-        If ($response.StatusCode -eq 200){
+function ExponentialDeleteRetry
+{ param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+    $MAX_ATTEMPTS = 64
+    $attempts = 2
+    $Timer = [System.Diagnostics.Stopwatch]::StartNew()
+    while($attempts -le $MAX_ATTEMPTS){
+        for($i = 0; $i -lt $attempts; $i++){
+           $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
+           If ($response){
             return $response
+            }
         }
-
-        WriteToLog ("Error Removing Document: Response returned " + $repsonse.StatusCode + ". Tried after " + $currBackoff + " seconds " + "`r`n") $LOG_FILE
-        
-        $currBackoff = [Math]::Pow($currBackoff,2)
+        $attempts = [Math]::Pow($attempts,2)
     }
 
-    WriteToLog ("Process failed after  " + $currBackoff + "s " + "`r`n") $LOG_FILE
+    $Timer.Stop()
+    WriteToLog ("Process failed after " + $MAX_ATTEMPTS.ToString() + ' attempts' +"`r`n" + 'Time:' + $Timer.Elapsed.ToString() + "s " + "`r`n") $LOG_FILE
     return $null
 }
 
@@ -107,6 +100,9 @@ function RemoveDocFromQueue
 function  MakeHttpGetCall
 {
     param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
+    $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    if($ProcessError){
+        WriteToLog $ProcessError
+    } 
     return $response
 }
