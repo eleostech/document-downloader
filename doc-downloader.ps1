@@ -20,6 +20,7 @@ $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY)
 
 $ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
                     Accept = 'application/json'}
+
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 $BASE_URI = "https://squid-fortress-staging.eleostech.com"
@@ -72,8 +73,8 @@ do
             }
             Else 
             {
-                WriteToLog ("Error Removing Document: Response returned " + $removeDoc.StatusCode + ". Trying again... `r`n") $LOG_FILE
-                $retry = ExpWait $redirect $HEADERS 1.000 $LOG_FILE
+                WriteToLog ("Error Removing Document. Trying again... `r`n") $LOG_FILE
+                $retry = ExponentialDeleteRetry $redirect $HEADERS $LOG_FILE
                 If($retry){
                     WriteToLog ("Document Removed from Queue with Status Code: " + $retry + "`r`n") $LOG_FILE 
                 }
