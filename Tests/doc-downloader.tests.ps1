@@ -25,7 +25,7 @@ Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
             $CurrentTime = Get-Date -Format yyyy-MM-dd
-            $path = "C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\"
+            $path = $src + "\Tests\" + $filename
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
             $filepath  = CreateLogFile $path
             Test-Path $filepath | should be $true 
@@ -33,7 +33,7 @@ Describe "Helper Function Tests" {
     }
 }
 
-Describe "Consumer API Function Tests" {
+Describe "Consume API Function Tests" {
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $BASE_URI + '/api/v1/documents/queued/next'
@@ -81,7 +81,7 @@ Describe "Consumer API Function Tests" {
             $request = $BASE_URI + '/api/v1/documents/queued/2'
             $repsonse = ExponentialDeleteRetry $request $Headers $testfile
             $response | should be $null
-            }
+        }
     }
           
 }
