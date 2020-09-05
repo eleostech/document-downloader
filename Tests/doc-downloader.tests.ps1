@@ -3,6 +3,8 @@ $src = Split-Path -Path $here -Parent
 . $src\doc-downloader.functions.ps1
 
 $BASE_URI = 'https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io'
+$ELEOS_URI = '"https://squid-fortress-staging.eleostech.com'
+
 
 $testfile = ($here + "\testlog.log")
 
@@ -10,8 +12,12 @@ if((Test-Path $testfile) -ne $True){
     New-Item -Path $testfile -ItemType File
     }
 
-$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) }
-$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY) }
+$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
+                         Accept = 'application/json'}
+
+$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
+                    Accept = 'application/json'}
+
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 
@@ -19,14 +25,15 @@ Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateTimestamp should produce correct date and time' {
             $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
-            mock -CommandName Get-Date -MockWith { $Timestamp }
+            #mock -CommandName Get-Date -MockWith { $Timestamp }
             CreateTimestamp | should be $Timestamp
         }
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
-            $CurrentTime = Get-Date -Format yyyy-MM-ddTHH
-            mock -CommandName Get-Date -MockWith { $CurrentTime }
+            $CurrentTime = Get-Date -Format yyyy-MM-dd
+            $path = "C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\"
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
-            CreateLogFile "C:\Eleos\" | should be $filename
+            $filepath  = CreateLogFile $path
+            Test-Path $filepath | should be $true
         }
     }
 }
@@ -46,7 +53,7 @@ Describe "Consume API Function Tests" {
 
          it 'GetNextDoc should return a 500 if there is a server error' {
             $request  =  $BASE_URI + '/api/v1/documents/queued/next/badserver'
-            GetNextDoc $request $HEADERS $testfile | should Throw
+            GetNextDoc $request $HEADERS $testfile
             }
         }
     Context 'Testing GetDocFromQueue function' {
