@@ -42,7 +42,7 @@ CheckDirectory $LOG_DIR
 Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
 
 # Creates Timestamp for LOG file
-$Timestamp = CreateTimestamp
+$Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
 WriteToLog ("`r`nScript Executed at: " + $Timestamp + "`r`n") $LOG_FILE
 
 # Starts Timer for LOG file
