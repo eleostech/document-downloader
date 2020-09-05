@@ -23,11 +23,6 @@ $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
-        it 'CreateTimestamp should produce correct date and time' {
-            $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
-            mock -CommandName Get-Date -MockWith { $Timestamp }
-            CreateTimestamp | should be $Timestamp
-        }
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
             $CurrentTime = Get-Date -Format yyyy-MM-dd
             $path = "C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\"

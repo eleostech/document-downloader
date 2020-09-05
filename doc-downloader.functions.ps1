@@ -2,12 +2,6 @@
 # Helper Functions
 #----------------------------------------------------------------------------------------------------------
 
-function CreateTimestamp
-{
-    $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
-    return $Timestamp
-}
-
 function CreateLogFile
 {
     param([string]$Dir)
