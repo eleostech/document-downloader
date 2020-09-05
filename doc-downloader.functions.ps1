@@ -42,6 +42,16 @@ function CheckDirectory
     }
 }
 
+function  MakeHttpGetCall
+{ param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+        if($ProcessError){
+            WriteToLog $ProcessError
+        }
+        return $response
+}
+
+
 function ExponentialDeleteRetry
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $MAX_ATTEMPTS = 64
@@ -88,13 +98,4 @@ function RemoveDocFromQueue
             WriteToLog $_.Exception.Message $LOG_FILE
             return $null
         }
-}
-
-function  MakeHttpGetCall
-{ param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-        if($ProcessError){
-            WriteToLog $ProcessError
-        }
-        return $response
 }

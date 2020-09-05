@@ -6,7 +6,7 @@ $BASE_URI = 'https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io'
 $ELEOS_URI = '"https://squid-fortress-staging.eleostech.com'
 
 
-$testfile = ($here + "\testlog.log")
+$testfile = ($here + "\TestFile.log")
 
 if((Test-Path $testfile) -ne $True){ 
     New-Item -Path $testfile -ItemType File
@@ -25,7 +25,7 @@ Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateTimestamp should produce correct date and time' {
             $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
-            #mock -CommandName Get-Date -MockWith { $Timestamp }
+            mock -CommandName Get-Date -MockWith { $Timestamp }
             CreateTimestamp | should be $Timestamp
         }
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
@@ -34,6 +34,7 @@ Describe "Helper Function Tests" {
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
             $filepath  = CreateLogFile $path
             Test-Path $filepath | should be $true
+            Remove-Item $filepath 
         }
     }
 }
@@ -79,17 +80,16 @@ Describe "Consume API Function Tests" {
         it 'RemoveDocFromQueue should return a 404 if the document to be removed could not be found' {
             $request = $BASE_URI + '/api/v1/documents/queued/2'
             $response = RemoveDocFromQueue $request $HEADERS $testfile
-            $false | should be $false
+            $false | should be $null
         }
     }
-    Context 'Testing ExpWait function' {
-        it 'ExpWait should return a null if the document is never removed after the wait due to 404 not found' {
+    Context 'Testing ExponentialDeleteRetry function' {
+        it 'ExpWait should return a null if the document is never removed after the multiple retires due to 404 not found' {
             $request = $BASE_URI + '/api/v1/documents/queued/2'
-            $repsonse = ExpWait $request $Headers 1.001 $testfile
+            $repsonse = ExponentialDeleteRetry $request $Headers $testfile
             $response | should be $null
             }
     }
           
 }
 
-Remove-Item "C:\Eleos\*.log"
