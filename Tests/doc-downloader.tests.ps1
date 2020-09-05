@@ -33,6 +33,7 @@ Describe "Helper Function Tests" {
     }
 }
 
+Describe "Consumer API Function Tests" {
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $BASE_URI + '/api/v1/documents/queued/next'
