@@ -17,7 +17,7 @@ function CreateLogFile
     if((Test-Path $filepath) -ne $True){
         New-Item -Path $filepath -ItemType File
     }
-    return $filepath;
+    return $filepath
 }
 
 function CreateDownloadFile 
@@ -68,21 +68,14 @@ function ExponentialDeleteRetry
 
 function GetNextDoc
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-        if($ProcessError){
-            WriteToLog $ProcessError
-        }
-        return $response       
+    $response = MakeHttpGetCall $URI $HEADERS $LOG_FILE
+    return $response   
 }
 
 function GetDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-         if($ProcessError){
-            WriteToLog $ProcessError
-        }
-        return $response
-
+    $response = MakeHttpGetCall $URI $HEADERS $LOG_FILE
+    return $response
 }
 
 function RemoveDocFromQueue
@@ -98,11 +91,10 @@ function RemoveDocFromQueue
 }
 
 function  MakeHttpGetCall
-{
-    param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-    if($ProcessError){
-        WriteToLog $ProcessError
-    } 
-    return $response
+{ param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+        if($ProcessError){
+            WriteToLog $ProcessError
+        }
+        return $response
 }
