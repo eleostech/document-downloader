@@ -42,7 +42,7 @@ CheckDirectory $LOG_DIR
 Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
 
 # Creates Timestamp for LOG file
-$Timestamp = CreateTimestamp
+$Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm:s"
 WriteToLog ("`r`nScript Executed at: " + $Timestamp + "`r`n") $LOG_FILE
 
 # Starts Timer for LOG file
@@ -53,6 +53,7 @@ do
     WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
     $URI = $BASE_URI + "/api/v1/documents/queued/next"
     try{ 
+        WriteToLog "Getting Next Document in Queue..." $LOG_FILE
         $response = GetNextDoc $URI $HEADERS $LOG_FILE
         If ($response.StatusCode -eq 302)
         {

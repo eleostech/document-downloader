@@ -28,14 +28,6 @@ Describe "Helper Function Tests" {
             mock -CommandName Get-Date -MockWith { $Timestamp }
             CreateTimestamp | should be $Timestamp
         }
-        it 'CreateLogFile should produce a log filename corresponding to todays date' {
-            $CurrentTime = Get-Date -Format yyyy-MM-dd
-            $path = "C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\"
-            $filename = ("Eleos-" + ($CurrentTime + ".log"))
-            $filepath  = CreateLogFile $path
-            Test-Path $filepath | should be $true 
-        }
-    }
 }
 
     Context 'Testing GetNextDoc function' {
