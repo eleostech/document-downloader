@@ -22,14 +22,6 @@ $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 
 Describe "Helper Function Tests" {
-    Context 'Verifying helper functions produce correct output' {
-        it 'CreateTimestamp should produce correct date and time' {
-            $Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm"
-            mock -CommandName Get-Date -MockWith { $Timestamp }
-            CreateTimestamp | should be $Timestamp
-        }
-}
-
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $BASE_URI + '/api/v1/documents/queued/next'
