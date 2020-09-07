@@ -9,7 +9,7 @@ $GlobalDocID = 0
 
 if((Test-Path $testfile) -ne $True){ 
     New-Item -Path $testfile -ItemType File
-    }
+}
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
 $API_KEY = "HCq568VGsoFaP81iYz3PiAtWTOF4fdpwuBJCQKddw3p"
@@ -21,7 +21,6 @@ $ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
                     Accept = 'application/json'}
 
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
-
 
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {

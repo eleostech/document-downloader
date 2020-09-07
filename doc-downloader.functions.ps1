@@ -3,8 +3,7 @@
 #----------------------------------------------------------------------------------------------------------
 
 function CreateLogFile
-{
-    param([string]$Dir)
+{param([string]$Dir)
     $CurrentTime = Get-Date -Format yyyy-MM-dd
     $filename = ("Eleos-" + ($CurrentTime + ".log"))
     $filepath = ($DIR + $filename)
@@ -15,34 +14,31 @@ function CreateLogFile
 }
 
 function CreateDownloadFile 
-{
-    param([int32] $file_count)
+{ param([int32] $file_count)
     $CurrentDate = Get-Date -Format yyyy-MM-dd
     $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
     return $filename
 } 
 
 function WriteToLog
-{ param([string]$TextToWrite, [string]$file)
-    
+{ param([string]$TextToWrite, [string]$file)  
     $TextToWrite | Out-File $file -Append
 }
 
 function CheckDirectory
 { param([string]$Dir)
-    if (-not (Test-Path $Dir))
-    {
+    if (-not (Test-Path $Dir)){
         new-item $Dir -itemtype directory
     }
 }
 
 function  MakeHttpGetCall
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-        if($ProcessError){
-            WriteToLog $ProcessError
-        }
-        return $response
+    $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    if($ProcessError){
+        WriteToLog $ProcessError
+    }
+    return $response
 }
 
 
@@ -84,12 +80,12 @@ function GetDocFromQueue
 
 function RemoveDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-       try{
+    try{
         $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
         return $response 
-        }
-        catch {
-            WriteToLog $_.Exception.Message $LOG_FILE
-            return $null
-        }
+    }
+    catch {
+        WriteToLog $_.Exception.Message $LOG_FILE
+         return $null
+    }
 }
