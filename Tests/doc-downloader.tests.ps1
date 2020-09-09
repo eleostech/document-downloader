@@ -25,24 +25,16 @@ $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
-<<<<<<< HEAD
             $CurrentTime = Get-Date -Format yyyy-MM-dd
-            $path = $src + "\Tests\" + $filename
             $filename = ("Eleos-" + ($CurrentTime + ".log"))
-=======
-            $path = "C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\"
->>>>>>> corey
+            $path = $src + "\Tests\" + $filename
             $filepath  = CreateLogFile $path
             Test-Path $filepath | should be $true 
         }
     }
 }
 
-<<<<<<< HEAD
-Describe "Consume API Function Tests" {
-=======
 Describe "Consume API Function Tests" {    
->>>>>>> corey
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $BASE_URI + '/api/v1/documents/queued/next'
