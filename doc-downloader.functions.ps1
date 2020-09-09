@@ -44,19 +44,24 @@ function  MakeHttpGetCall
 
 function ExponentialDeleteRetry
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    $MAX_ATTEMPTS = 64
-    $attempts = 2
+    $MAX_ATTEMPTS = 5
+    $attempts = 1
+    $MAX_BACKOFF = 10
+    $curr_backoff = 2
     $Timer = [System.Diagnostics.Stopwatch]::StartNew()
-    while($attempts -le $MAX_ATTEMPTS){
-        for($i = 0; $i -lt $attempts; $i++){
-           $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
-           If ($response){
-            return $response
+    for($i = $attempts; $i -lt $MAX_ATTEMPTS; $i++){
+        $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
+            If ($response){
+                return $response
             }
+            else{
+                $offset = (Get-Random -Maximum 3000) / 1000
+                Start-Sleep -Seconds ($curr_backoff + $offset)
+            }
+        If ($curr_backoff -lt $MAX_BACKOFF){
+            $curr_backoff = [Math]::Pow($curr_backoff,2)
         }
-        $attempts = [Math]::Pow($attempts,2)
     }
-
     $Timer.Stop()
     WriteToLog ("Process failed after " + $MAX_ATTEMPTS.ToString() + ' attempts' +"`r`n" + 'Time:' + $Timer.Elapsed.ToString() + "s " + "`r`n") $LOG_FILE
     return $null
