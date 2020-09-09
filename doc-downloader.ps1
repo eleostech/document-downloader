@@ -66,10 +66,10 @@ do
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             try{
-                wget $filename -OutFile $DESTINATION_PATH/$filename
+                wget $downloadURI -OutFile $DESTINATION_PATH/$filename
             }
             catch {
-                WriteToLog $_.Exception.Message $LOG_FILE
+                WriteToLog  ($_.Exception.Message + "`r`n" + "Error Occured at: " + $Timer.Elapsed.ToString() + "`r`n") $LOG_FILE
                 break
             }
             
