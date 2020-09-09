@@ -42,6 +42,17 @@ function  MakeHttpGetCall
 }
 
 
+function  MakeHttpDeleteCall 
+{  param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+    try{
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 
+        return $response
+    }
+    catch {
+        return $null
+    }
+}
+
 function ExponentialDeleteRetry
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $MAX_ATTEMPTS = 5
@@ -50,7 +61,7 @@ function ExponentialDeleteRetry
     $curr_backoff = 2
     $Timer = [System.Diagnostics.Stopwatch]::StartNew()
     for($i = $attempts; $i -lt $MAX_ATTEMPTS; $i++){
-        $response = RemoveDocFromQueue $URI $HEADERS $LOG_FILE
+        $response = MakeHttpDeleteCall $URI $HEADERS $LOG_FILE
             If ($response){
                 return $response
             }
@@ -85,12 +96,17 @@ function GetDocFromQueue
 
 function RemoveDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    try{
-        $response = Invoke-WebRequest -Uri $URI -Method DELETE -Headers $HEADERS
-        return $response 
+    $response = MakeHttpDeleteCall $URI $HEADERS $LOG_FILE
+    if($response -eq $null){           
+        WriteToLog ("Error Removing Document. Trying again... `r`n") $LOG_FILE
+        $retry = ExponentialDeleteRetry $redirect $HEADERS $LOG_FILE
+        If($retry){
+            WriteToLog ("Document Removed from Queue with Status Code: " + $retry.StatusCode + "`r`n") $LOG_FILE 
+        }
+        Else{
+            WriteToLog ("Error Removing Document after retry`r`n") $LOG_FILE
+        }
+        return $retry
     }
-    catch {
-        WriteToLog $_.Exception.Message $LOG_FILE
-         return $null
-    }
+    return $response
 }
