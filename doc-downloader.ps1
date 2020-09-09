@@ -65,7 +65,13 @@ do
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
-            wget $downloadURI -OutFile $DESTINATION_PATH/$filename
+            try{
+                wget $filename -OutFile $DESTINATION_PATH/$filename
+            }
+            catch {
+                WriteToLog $_.Exception.Message $LOG_FILE
+                break
+            }
             
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc)
