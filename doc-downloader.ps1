@@ -80,14 +80,7 @@ do
             }
             Else 
             {
-                WriteToLog ("Error Removing Document. Trying again... `r`n") $LOG_FILE
-                $retry = ExponentialDeleteRetry $redirect $HEADERS $LOG_FILE
-                If($retry){
-                    WriteToLog ("Document Removed from Queue with Status Code: " + $retry + "`r`n") $LOG_FILE 
-                }
-                Else{
-                    WriteToLog ("Error Removing Document after retry`r`n") $LOG_FILE
-                }
+                WriteToLog ("Error Removing Document from the Queue after several attempts`r`n") $LOG_FILE
             }
         }
         Else
