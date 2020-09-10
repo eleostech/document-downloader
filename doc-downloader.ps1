@@ -42,7 +42,7 @@ CheckDirectory $LOG_DIR
 Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
 
 # Creates Timestamp for LOG file
-$Timestamp = Get-Date -format "dd-MMM-yyyy HH:mm:s"
+$Timestamp = Get-Date -format "dd-MM-yyyy HH:mm:s"
 WriteToLog ("`r`nScript Executed at: " + $Timestamp + "`r`n") $LOG_FILE
 
 # Starts Timer for LOG file
@@ -69,7 +69,7 @@ do
                 wget $downloadURI -OutFile $DESTINATION_PATH/$filename
             }
             catch {
-                WriteToLog  ($_.Exception.Message + "`r`n" + "Error Occured at: " + $Timer.Elapsed.ToString() + "`r`n") $LOG_FILE
+                WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
                 break
             }
             
