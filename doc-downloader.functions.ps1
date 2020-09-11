@@ -57,8 +57,8 @@ function ExponentialDeleteRetry
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $MAX_ATTEMPTS = 5
     $attempts = 1
-    $MAX_BACKOFF = 10
-    $curr_backoff = 2
+    $MAX_BACKOFF = 16
+    $curr_backoff = 1
     $Timer = [System.Diagnostics.Stopwatch]::StartNew()
     for($i = $attempts; $i -lt $MAX_ATTEMPTS; $i++){
         $response = MakeHttpDeleteCall $URI $HEADERS $LOG_FILE
@@ -70,7 +70,7 @@ function ExponentialDeleteRetry
                 Start-Sleep -Seconds ($curr_backoff + $offset)
             }
         If ($curr_backoff -lt $MAX_BACKOFF){
-            $curr_backoff = [Math]::Pow($curr_backoff,2)
+            $curr_backoff = $curr_backoff * 2
         }
     }
     $Timer.Stop()
