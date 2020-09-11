@@ -90,8 +90,8 @@ function GetNextDoc
 
 function GetDocFromQueue
 { param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
-    $response = MakeHttpGetCall $URI $HEADERS $LOG_FILE
-    return $response
+        $response = MakeHttpGetCall $URI $HEADERS $LOG_FILE
+        return $response
 }
 
 function RemoveDocFromQueue

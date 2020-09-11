@@ -31,6 +31,7 @@ Describe "Helper Function Tests" {
             $filepath  = CreateLogFile $path
             Test-Path $filepath | should be $true 
         }
+        
     }
 }
 
@@ -57,15 +58,18 @@ Describe "Consume API Function Tests" {
     Context 'Testing GetDocFromQueue function' {
         it 'GetDocFromQueue should return a 302 with URL and filename to download document' {
             $request = $BASE_URI
-            #$response = GetDocFromQueue $request $HEADERS $testfile
-            #$response = $response | ConvertFrom-Json
-            $response = @{document_identifier = "12"}
+            $response = GetDocFromQueue $request $HEADERS $testfile
             $response | should not be $null
         }
         it 'GetDocFromQueue should return a 404 if document could not be found' {
             $request = $BASE_URI + '/api/v1/documents/queued/2'
-            #$repsonse = GetDocFromQueue $request $HEADERS $testfile | should throw 
-            $false | should be $false
+            try{
+                GetDocFromQueue $request $HEADERS $testfile 
+            }
+            catch {
+                Write-Host $_.ScriptStackTrace
+            }
+            #$false | should be $false
         }
     }
     Context 'Testing RemoveDocFromQueue function' {
