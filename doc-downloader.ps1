@@ -61,9 +61,9 @@ do
             WriteToLog "Found Document in Queue..." $LOG_FILE
             $redirect = $BASE_URI + $response.Headers["Location"]
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
-            $filename = CreateDownloadFile $file_count
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
+            $filename = CreateDownloadFile $downloadURI $file_count
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             try{
                 wget $downloadURI -OutFile $DESTINATION_PATH/$filename
@@ -98,3 +98,4 @@ while($response.StatusCode -eq 302)
 # Ends Timer for LOG file
 $Timer.Stop()
 WriteToLog ("Script total run time: " + $Timer.Elapsed.ToString()) $LOG_FILE
+WriteToLog ($file_count.ToString() + " documents downloaded." + "`r`n") $LOG_FILE

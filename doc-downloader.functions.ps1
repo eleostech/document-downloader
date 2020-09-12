@@ -14,9 +14,14 @@ function CreateLogFile
 }
 
 function CreateDownloadFile 
-{ param([int32] $file_count)
+{ param([string] $downloadURI, [int32] $file_count)
     $CurrentDate = Get-Date -Format yyyy-MM-dd
-    $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
+    if($downloadURI.Contains(".zip")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
+    }
+    elseif ($downloadURI.Contains(".pdf")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
+    }
     return $filename
 } 
 
@@ -45,7 +50,7 @@ function  MakeHttpGetCall
 function  MakeHttpDeleteCall 
 {  param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -Method Delete
         return $response
     }
     catch {
