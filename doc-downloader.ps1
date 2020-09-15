@@ -14,6 +14,8 @@ $API_KEY = "***REMOVED***"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
 $LOG_DIR = "C:\Eleos\Logs\"
+$date = (Get-Date -Format "MM-dd").ToString()
+$FILE_DIR = $DESTINATION_PATH + $date + "\"
 
 $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
                          Accept = 'application/json'}
@@ -37,6 +39,7 @@ $BASE_URI = "https://squid-fortress-staging.eleostech.com"
 # Checks and Creates Directory if it does not exist
 CheckDirectory $DESTINATION_PATH
 CheckDirectory $LOG_DIR 
+CheckDirectory $FILE_DIR
 
 # Creates LOG File
 Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
@@ -66,7 +69,7 @@ do
             $filename = CreateDownloadFile $downloadURI $file_count
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             try{
-                wget $downloadURI -OutFile $DESTINATION_PATH/$filename
+                wget $downloadURI -OutFile $FILE_DIR/$filename
             }
             catch {
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
