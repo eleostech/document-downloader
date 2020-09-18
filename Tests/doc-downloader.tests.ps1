@@ -2,17 +2,16 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $src = Split-Path -Path $here -Parent
 . $src\doc-downloader.functions.ps1
 
-$BASE_URI = 'https://squid-fortress-staging.eleostech.com'
+$BASE_URI = 'https://359c4f0b-d5b7-459f-9997-dbebf9369b15.mock.pstmn.io'
 
 $testfile = ($here + "\TestFile.log")
-$GlobalDocID = 0
 
 if((Test-Path $testfile) -ne $True){ 
     New-Item -Path $testfile -ItemType File
 }
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
-$API_KEY = "HCq568VGsoFaP81iYz3PiAtWTOF4fdpwuBJCQKddw3p"
+$API_KEY = "Placeholder"
 
 $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
                          Accept = 'application/json'}
@@ -49,10 +48,14 @@ Describe "Consume API Function Tests" {
             }
 
          it 'GetNextDoc should return a 500 if there is a server error' {
-            $request  =  $BASE_URI + '/api/v1/documents/queued/next/badserver'
-            #GetNextDoc $request $HEADERS $testfile
-            $false | should be $false
-         }
+                $request  =  $BASE_URI + '/api/v1/documents/queued/next/badserver'
+                try{
+                    $request = GetNextDoc $request $HEADERS $testfile -ErrorAction SilentlyContinue 
+                } 
+                catch {
+                    $_.CategoryInfo.Reason | Should be 'WebException' 
+                }
+        }
     }
 
     Context 'Testing GetDocFromQueue function' {
@@ -63,23 +66,20 @@ Describe "Consume API Function Tests" {
         }
         it 'GetDocFromQueue should return a 404 if document could not be found' {
             $request = $BASE_URI + '/api/v1/documents/queued/2'
-            try{
-                GetDocFromQueue $request $HEADERS $testfile 
-            }
-            catch {
-                Write-Host $_.ScriptStackTrace
-            }
-            #$false | should be $false
+                try{
+                    $request = GetNextDoc $request $HEADERS $testfile -ErrorAction SilentlyContinue 
+                } 
+                catch {
+                    $_.CategoryInfo.Reason | Should be 'WebException' 
+                }
         }
     }
     Context 'Testing RemoveDocFromQueue function' {
         it 'RemoveDocFromQueue should return a 200 if a document was successfully removed from the queue' {
             $request = $BASE_URI + '/api/v1/documents/queued/' + $GlobalDocID.ToString()
-           # $response = RemoveDocFromQueue $request $HEADERS $testfile
-           # $response = $response | ConvertFrom-Json
-            $response = @{message = "Document Downloaded Successfully" }
-            $response.message = "Document Downloaded Successfully"
-            $response.message | should be "Document Downloaded Successfully"
+            $response = RemoveDocFromQueue $request $HEADERS $testfile
+            $response = $response | ConvertFrom-Json
+            $response.message | Should be "Document Downloaded Successfully"
         }
         it 'RemoveDocFromQueue should return a 404 if the document to be removed could not be found' {
             $request = $BASE_URI + '/api/v1/documents/queued/1000000000'
@@ -94,5 +94,4 @@ Describe "Consume API Function Tests" {
             $response | should be $null
         }
     }
-          
 }
