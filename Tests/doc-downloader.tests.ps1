@@ -30,6 +30,24 @@ Describe "Helper Function Tests" {
             $filepath  = CreateLogFile $path
             Test-Path $filepath | should be $true 
         }
+        it 'CreateDownloadFile should produce a filename with extension .zip if the file downloaded is a .zip file' {
+            $response = GetNextDoc $URI $HEADERS $LOG_FILE
+            $redirect = $BASE_URI + $response.Headers["Location"]
+            $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
+            $queuedDoc = $queuedDoc | ConvertFrom-Json
+            $downloadURI = $queuedDoc.download_url
+            $filename = CreateDownloadFile $downloadURI $file_count
+            $filename.Contains(".zip") | should be $true
+        }
+        it 'CreateDownloadFile should produce a filename with extension .pdf if the file downloaded is a .pdf file' {
+            $response = GetNextDoc $URI $HEADERS $LOG_FILE
+            $redirect = $BASE_URI + $response.Headers["Location"]
+            $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
+            $queuedDoc = $queuedDoc | ConvertFrom-Json
+            $downloadURI = $queuedDoc.download_url
+            $filename = CreateDownloadFile $downloadURI $file_count
+            $filename.Contains(".pdf") | should be $true
+        }
         
     }
 }
