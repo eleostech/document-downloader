@@ -16,11 +16,19 @@ function CreateLogFile
 function CreateDownloadFile 
 { param([string] $downloadURI, [int32] $file_count)
     $CurrentDate = Get-Date -Format yyyy-MM-dd
+
     if($downloadURI.Contains(".zip")){
         $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
     }
     elseif ($downloadURI.Contains(".pdf")){
         $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
+    }
+
+    elseif ($downloadURI.Contains(".png")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.png')
+    }
+    elseif ($downloadURI.Contains(".jpg")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.jpg')
     }
     return $filename
 } 

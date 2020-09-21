@@ -29,26 +29,14 @@ Describe "Helper Function Tests" {
             Test-Path $filepath | should be $true 
             Get-ChildItem ($src + '\Tests\*log')  | ForEach-Object {Remove-Item $_}
         }
-        it 'CreateDownloadFile should produce a filename with extension .zip if the file downloaded is a .zip file' {
-            # $response = GetNextDoc $URI $HEADERS $LOG_FILE
-            # $redirect = $BASE_URI + $response.Headers["Location"]
-            # $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
-            # $queuedDoc = $queuedDoc | ConvertFrom-Json
-            # $downloadURI = $queuedDoc.download_url
-            # $filename = CreateDownloadFile $downloadURI $file_count
-            # $filename.Contains(".zip") | should be $true
-            $true | Should be $true
+  
+        it 'CreateDownloadFile should produce filename with correct extension' { 
+            $URI = $BASE_URI + '/api/v1/documents/queued/1'
+            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
+            $queuedDoc = $queuedDoc | ConvertFrom-Json
+            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
+            $filename.Contains(".jpg") | should be $true
         }
-        it 'CreateDownloadFile should produce a filename with extension .pdf if the file downloaded is a .pdf file' {
-            # $response = GetNextDoc $URI $HEADERS $LOG_FILE
-            # $redirect = $BASE_URI + $response.Headers["Location"]
-            # $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
-            # $queuedDoc = $queuedDoc | ConvertFrom-Json
-            # $downloadURI = $queuedDoc.download_url
-            # $filename = CreateDownloadFile $downloadURI $file_count
-            # $filename.Contains(".pdf") | should be $true
-            $true | Should be $true 
-        }        
     }
 }
 
