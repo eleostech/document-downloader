@@ -69,7 +69,7 @@ Describe "Consume API Function Tests" {
             $true | Should be $true
         }
 
-         it 'GetNextDoc should throw an exception if a 500 status code is returned' {
+        it 'GetNextDoc should throw an exception if a 500 status code is returned' {
             $request  =  $BASE_URI + '/api/v1/documents/queued/next/badserver'
             $exception = $false
             try{
