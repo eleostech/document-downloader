@@ -93,8 +93,6 @@ function ExponentialDeleteRetry
 
 function ExtractFilename {
     param ([string]$contentDisposition)
-        # $downloadInfo = wget $downloadURI
-        # $file = $downloadInfo.Headers.'Content-Disposition'
         $pos = $contentDisposition.IndexOf('="')
         $rightPart = $contentDisposition.Substring($pos+1)
         $filename = $rightPart.Replace('"', "")
