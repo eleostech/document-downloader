@@ -66,9 +66,10 @@ do
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
-            $filename = CreateDownloadFile $downloadURI $file_count
+            #$filename = CreateDownloadFile $downloadURI $file_count
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             try{
+                $filename = ExtractFilename $downloadURI
                 wget $downloadURI -OutFile $FILE_DIR/$filename
             }
             catch {
