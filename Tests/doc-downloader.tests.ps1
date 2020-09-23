@@ -37,6 +37,14 @@ Describe "Helper Function Tests" {
             $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
             $filename.Contains(".jpg") | should be $true
         }
+
+        it 'ExtractFilename should produce a string that matches the name of file in Content-Dispostion' {
+            $contentDisposition = 'attachment; filename="_NA__NA__2020-09-23T195147Z_56556.zip"'
+            $filename = ExtractFilename $contentDisposition
+            $ContainsNonFileNameStrings = !($filename.Contains('filename="') -and $filename.Contains('attachment;'))
+            $ProperExtension = $filename.Contains('.zip') -or $filename.Contains('.jpg') -or $filename.Contains('.pdf')
+            $ContainsNonFileNameStrings -and $ProperExtension | Should be $true
+        }
     }
 }
 
