@@ -91,6 +91,15 @@ function ExponentialDeleteRetry
     return $null
 }
 
+function ExtractFilename {
+    param ([string]$downloadURI)
+        $downloadInfo = wget $downloadURI
+        $file = $downloadInfo.Headers.'Content-Disposition'
+        $pos = $file.IndexOf('="')
+        $rightPart = $file.Substring($pos+1)
+        $filename = $rightPart.Replace('"', "")
+        return $filename
+}
 #----------------------------------------------------------------------------------------------------------
 # Eleos API Consumer Functions
 #----------------------------------------------------------------------------------------------------------
