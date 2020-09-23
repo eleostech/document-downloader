@@ -68,7 +68,9 @@ do
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             try{
-                $filename = ExtractFilename $downloadURI
+                $content = wget $downloadURI
+                $contentDisposition = $content.Headers.'Content-Disposition'
+                $filename = ExtractFilename $contentDisposition
                 wget $downloadURI -OutFile $FILE_DIR/$filename
             }
             catch {
