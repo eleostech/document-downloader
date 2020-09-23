@@ -60,7 +60,6 @@ do
         $response = GetNextDoc $URI $HEADERS $LOG_FILE
         If ($response.StatusCode -eq 302)
         {
-            $file_count++
             WriteToLog "Found Document in Queue..." $LOG_FILE
             $redirect = $BASE_URI + $response.Headers["Location"]
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
@@ -72,6 +71,7 @@ do
                 $contentDisposition = $content.Headers.'Content-Disposition'
                 $filename = ExtractFilename $contentDisposition
                 wget $downloadURI -OutFile $FILE_DIR/$filename
+                $file_count++
             }
             catch {
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
