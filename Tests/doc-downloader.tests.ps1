@@ -49,6 +49,18 @@ Describe "Helper Function Tests" {
             $ContainsNonFileNameStrings = !($filename.Contains('filename="') -and $filename.Contains('attachment;'))
             $ContainsNonFileNameStrings | Should be $true
         }
+
+        it 'ExtractFilename should produce a string that matches a filename if the filename has delimeters'{
+            $contentDisposition = 'attachment; filename="_NA__NA__; 2020-09.zip"'
+            $filename = ExtractFilename $contentDisposition
+            $filename | Should be "_NA__NA__; 2020-09.zip"
+        }
+
+        it 'ExtractFilename should produce a string that matches a filename if the Content-Disposition is incorrectly formatted'{
+            $contentDisposition = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa filename="file.jpg"'
+            $filename = ExtractFilename $contentDisposition
+            $filename | Should be "file.jpg"
+        }
     }
 }
 

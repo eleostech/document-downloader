@@ -15,13 +15,16 @@ function CreateLogFile
 
 function CreateDownloadFile 
 { param([string] $downloadURI, [int32] $file_count)
-    $CurrentDate = Get-Date -Format yyyy-MM-dd
+    $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm:ss"
 
     if($downloadURI.Contains(".zip")){
         $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
     }
     elseif ($downloadURI.Contains(".pdf")){
         $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
+    }
+    elseif ($downloadURI.Contains(".tif")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.tif')
     }
 
     elseif ($downloadURI.Contains(".png")){
@@ -99,6 +102,19 @@ function ExtractFilename {
         $last = $rightPart.LastIndexOf('"')    
         $file = $rightPart.Substring($first + 1, $last - $first - 1)
         return $file
+}
+
+function GetFilename {
+    param ([string] $downloadURI, [int32]$file_count)
+        $content = wget $downloadURI
+        if($content.Headers.'Content-Disposition' -and $content.Headers){
+            $contentDisposition = $content.Headers.'Content-Disposition'
+            $filename = ExtractFilename $contentDisposition
+        }
+        else {
+            $filename = CreateDownloadFile $downloadURI $file_count
+        }
+        return $filename
 }
 
 #----------------------------------------------------------------------------------------------------------
