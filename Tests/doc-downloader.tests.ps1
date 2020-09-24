@@ -38,28 +38,39 @@ Describe "Helper Function Tests" {
             $filename.Contains(".jpg") | should be $true
         }
 
-        it 'ExtractFilename should produce a string that matches the name of file in Content-Dispostion' {
+        it 'ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion' {
             $contentDisposition = 'attachment; filename="_NA__NA__2020-09-23T195147Z_56556.zip"'
-            $filename = ExtractFilename $contentDisposition
+            $filename = ExtractFilenameFromHeader $contentDisposition
             $filename | Should be '_NA__NA__2020-09-23T195147Z_56556.zip'
         }
-        it 'ExtractFilename should only produce a string that matches the filename' {
+        it 'ExtractFilenameFromHeader should only produce a string that matches the filename' {
             $contentDisposition = 'attachment; filename="_NA__NA__2020-09-23T195147Z_56556.zip"'
-            $filename = ExtractFilename $contentDisposition
+            $filename = ExtractFilenameFromHeader $contentDisposition
             $ContainsNonFileNameStrings = !($filename.Contains('filename="') -and $filename.Contains('attachment;'))
             $ContainsNonFileNameStrings | Should be $true
         }
 
-        it 'ExtractFilename should produce a string that matches a filename if the filename has delimeters'{
+        it 'ExtractFilenameFromHeader should produce a string that matches a filename if the filename has delimeters'{
             $contentDisposition = 'attachment; filename="_NA__NA__; 2020-09.zip"'
-            $filename = ExtractFilename $contentDisposition
+            $filename = ExtractFilenameFromHeader $contentDisposition
             $filename | Should be "_NA__NA__; 2020-09.zip"
         }
 
-        it 'ExtractFilename should produce a string that matches a filename if the Content-Disposition is incorrectly formatted'{
+        it 'ExtractFilenameFromHeader should produce a string that matches a filename if the Content-Disposition is incorrectly formatted'{
             $contentDisposition = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa filename="file.jpg"'
-            $filename = ExtractFilename $contentDisposition
+            $filename = ExtractFilenameFromHeader $contentDisposition
             $filename | Should be "file.jpg"
+        }
+
+        it 'GetFilename should not crash and return a filename if Content-Disposition header does not exist' {
+            $downloadURI = $BASE_URI + '/api/download/mock_server_file.png'
+            $filename = GetFilename $downloadURI 1
+            $filename -like "Eleos-*png" | Should be $true
+        }
+        it 'GetFilename should not crash and return a filename called file.tif from the Content-Disopostion header' {
+            $downloadURI = $BASE_URI + '/api/content-disp'
+            $filename = GetFilename $downloadURI 0
+            $filename | Should be 'file.tif'
         }
     }
 }

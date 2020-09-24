@@ -15,7 +15,7 @@ function CreateLogFile
 
 function CreateDownloadFile 
 { param([string] $downloadURI, [int32] $file_count)
-    $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm:ss"
+    $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
 
     if($downloadURI.Contains(".zip")){
         $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
@@ -94,27 +94,28 @@ function ExponentialDeleteRetry
     return $null
 }
 
-function ExtractFilename {
-    param ([string]$contentDisposition)
-        $pos = $contentDisposition.IndexOf('filename=')
-        $rightPart = $contentDisposition.Substring($pos)
-        $first = $rightPart.IndexOf('"')
-        $last = $rightPart.LastIndexOf('"')    
-        $file = $rightPart.Substring($first + 1, $last - $first - 1)
-        return $file
+
+function ExtractFilenameFromHeader
+{ param ([string]$contentDisposition)
+    $pos = $contentDisposition.IndexOf('filename=')
+    $rightPart = $contentDisposition.Substring($pos)
+    $first = $rightPart.IndexOf('"')
+    $last = $rightPart.LastIndexOf('"')    
+    $file = $rightPart.Substring($first + 1, $last - $first - 1)
+    return $file
 }
 
-function GetFilename {
-    param ([string] $downloadURI, [int32]$file_count)
-        $content = wget $downloadURI
-        if($content.Headers.'Content-Disposition' -and $content.Headers){
-            $contentDisposition = $content.Headers.'Content-Disposition'
-            $filename = ExtractFilename $contentDisposition
-        }
-        else {
-            $filename = CreateDownloadFile $downloadURI $file_count
-        }
-        return $filename
+function GetFilename
+{ param ([string] $downloadURI, [int32]$file_count)
+    $content = wget $downloadURI
+    $contentDisposition = $content.Headers.'Content-Disposition'
+    if($contentDisposition -and $contentDisposition.Contains("filename=")){
+        $contentDisposition = $content.Headers.'Content-Disposition'
+        return ExtractFilenameFromHeader $contentDisposition
+    }
+    else {
+        return CreateDownloadFile $downloadURI $file_count
+    }
 }
 
 #----------------------------------------------------------------------------------------------------------
