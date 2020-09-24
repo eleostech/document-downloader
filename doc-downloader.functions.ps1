@@ -93,10 +93,12 @@ function ExponentialDeleteRetry
 
 function ExtractFilename {
     param ([string]$contentDisposition)
-        $pos = $contentDisposition.IndexOf('="')
-        $rightPart = $contentDisposition.Substring($pos+1)
-        $filename = $rightPart.Replace('"', "")
-        return $filename
+        $pos = $contentDisposition.IndexOf('filename=')
+        $rightPart = $contentDisposition.Substring($pos)
+        $first = $rightPart.IndexOf('"')
+        $last = $rightPart.LastIndexOf('"')    
+        $file = $rightPart.Substring($first + 1, $last - $first - 1)
+        return $file
 }
 
 #----------------------------------------------------------------------------------------------------------
