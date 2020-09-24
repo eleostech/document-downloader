@@ -66,12 +66,10 @@ do
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
+            $file_count++
             try{
-                $content = wget $downloadURI
-                $contentDisposition = $content.Headers.'Content-Disposition'
-                $filename = ExtractFilename $contentDisposition
+                $filename = GetFilename $downloadURI $file_count
                 wget $downloadURI -OutFile $FILE_DIR/$filename
-                $file_count++
             }
             catch {
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
