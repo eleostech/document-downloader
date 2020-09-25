@@ -39,20 +39,20 @@ Describe "Helper Function Tests" {
         }
 
         it 'ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion' {
-            $contentDisposition = 'attachment; filename="_NA__NA__2020-09-23T195147Z_56556.zip"'
-            $filename = ExtractFilenameFromHeader $contentDisposition
-            $filename | Should be '_NA__NA__2020-09-23T195147Z_56556.zip'
+            $downloadURI = $BASE_URI + "/api/download/validHeader"
+            $filename = ExtractFilenameFromHeader $downloadURI
+            $filename | Should be 'filename.jpg'
         }
         it 'ExtractFilenameFromHeader should only produce a string that matches the filename' {
-            $contentDisposition = 'attachment; filename="_NA__NA__2020-09-23T195147Z_56556.zip"'
-            $filename = ExtractFilenameFromHeader $contentDisposition
+            $downloadURI = $BASE_URI + "/api/download/validHeader"
+            $filename = ExtractFilenameFromHeader $downloadURI
             $ContainsNonFileNameStrings = !($filename.Contains('filename="') -and $filename.Contains('attachment;'))
             $ContainsNonFileNameStrings | Should be $true
         }
 
         it 'ExtractFilenameFromHeader should produce a string that matches a filename if the filename has delimeters'{
-            $contentDisposition = 'attachment; filename="_NA__NA__; 2020-09.zip"'
-            $filename = ExtractFilenameFromHeader $contentDisposition
+            $downloadURI = $BASE_URI + "/api/download/multipledelimeter"
+            $filename = ExtractFilenameFromHeader $downloadURI
             $filename | Should be "_NA__NA__; 2020-09.zip"
         }
 
