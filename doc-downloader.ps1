@@ -46,7 +46,7 @@ Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
 
 # Creates Timestamp for LOG file
 $Timestamp = Get-Date -format "dd-MM-yyyy HH:mm:s"
-WriteToLog ("`r`nScript Executed at: " + $Timestamp + "`r`n") $LOG_FILE
+WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $LOG_FILE
 
 # Starts Timer for LOG file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
