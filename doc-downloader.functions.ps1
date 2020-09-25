@@ -109,7 +109,7 @@ function GetFilename
 { param ([string] $downloadURI, [int32]$file_count)
     $content = wget $downloadURI
     $contentDisposition = $content.Headers.'Content-Disposition'
-    if($contentDisposition -and $contentDisposition.Contains("filename=")){
+    if($contentDisposition -and $contentDisposition.Contains("filename=") -and $contentDisposition.Contains("attachment; filename=")){
         $contentDisposition = $content.Headers.'Content-Disposition'
         return ExtractFilenameFromHeader $contentDisposition
     }
