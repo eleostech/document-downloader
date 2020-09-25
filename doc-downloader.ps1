@@ -27,10 +27,8 @@ $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
 $BASE_URI = "https://squid-fortress-staging.eleostech.com"
 #----------------------------------------------------------------------------------------------------------
-# Functions
-#----------------------------------------------------------------------------------------------------------
-
 # Functions are defined in doc-downloader.functions.ps1
+#----------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------
 # Main Script
@@ -42,11 +40,10 @@ CheckDirectory $LOG_DIR
 CheckDirectory $FILE_DIR
 
 # Creates LOG File
-Set-Variable LOG_FILE (CreateLogFile $LOG_DIR) -Option ReadOnly -Force
-
+$log_file = (CreateLogFile $LOG_DIR)
 # Creates Timestamp for LOG file
 $Timestamp = Get-Date -format "dd-MM-yyyy HH:mm:s"
-WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $LOG_FILE
+WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $log_file
 
 # Starts Timer for LOG file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()

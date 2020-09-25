@@ -8,7 +8,7 @@ function CreateLogFile
     $filename = ("Eleos-" + ($CurrentTime + ".log"))
     $filepath = ($DIR + $filename)
     if((Test-Path $filepath) -ne $True){
-        New-Item -Path $filepath -ItemType File
+         New-Item -Path $filepath -ItemType File
     }
     return $filepath
 }
