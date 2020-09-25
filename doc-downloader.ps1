@@ -48,15 +48,13 @@ WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $log_file
 # Starts Timer for LOG file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 $file_count = 0
-do 
-{
+do{
     WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
     $URI = $BASE_URI + "/api/v1/documents/queued/next"
     try{ 
         WriteToLog "Getting Next Document in Queue..." $LOG_FILE
         $response = GetNextDoc $URI $HEADERS $LOG_FILE
-        If ($response.StatusCode -eq 302)
-        {
+        If ($response.StatusCode -eq 302){
             WriteToLog "Found Document in Queue..." $LOG_FILE
             $redirect = $BASE_URI + $response.Headers["Location"]
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
@@ -68,28 +66,24 @@ do
                 $filename = GetFilename $downloadURI $file_count
                 wget $downloadURI -OutFile $FILE_DIR/$filename
             }
-            catch {
+            catch{
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
                 break
             }
             
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
-            If ($removeDoc)
-            {
+            If ($removeDoc){
                 WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n") $LOG_FILE
             }
-            Else 
-            {
+            Else{
                 WriteToLog ("Error Removing Document from the Queue after several attempts`r`n") $LOG_FILE
             }
         }
-        Else
-        {
+        Else{
             WriteToLog ("No Documents in Queue: Response returned " + $response.StatusCode + "`r`n") $LOG_FILE
         }
     }
-    catch [System.Net.WebException]
-    {
+    catch [System.Net.WebException]{
         WriteToLog ("An exception has occured: " + $_.Exception.Message + "`r`n") $LOG_FILE
     }
 }
