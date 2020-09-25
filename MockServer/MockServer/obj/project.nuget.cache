@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "BqXvKd7RrYZuNAisC6Mi8g2SLGf7ogRoEDukfbp5wENSpn6F6FaE0BJuHsR4Lvw3MKHPn3SeigQBPza7QnVHhA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\MockServer\\MockServer\\MockServer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\corey\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
