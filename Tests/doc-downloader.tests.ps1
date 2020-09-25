@@ -56,21 +56,15 @@ Describe "Helper Function Tests" {
             $filename | Should be "_NA__NA__; 2020-09.zip"
         }
 
-        it 'ExtractFilenameFromHeader should produce a string that matches a filename if the Content-Disposition is incorrectly formatted'{
-            $contentDisposition = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa filename="file.jpg"'
-            $filename = ExtractFilenameFromHeader $contentDisposition
-            $filename | Should be "file.jpg"
-        }
-
         it 'GetFilename should not crash and return a filename if Content-Disposition header does not exist' {
             $downloadURI = $BASE_URI + '/api/download/mock_server_file.png'
             $filename = GetFilename $downloadURI 1
             $filename -like "Eleos-*png" | Should be $true
         }
-        it 'GetFilename should not crash and return a filename called file.tif from the Content-Disopostion header' {
-            $downloadURI = $BASE_URI + '/api/content-disp'
+        it 'GetFilename should not crash and return a filename called Eleos-<Date and time>.tif' {
+            $downloadURI = $BASE_URI + '/api/content-disp/somefile.tif'
             $filename = GetFilename $downloadURI 0
-            $filename | Should be 'file.tif'
+            $filename -like "Eleos-*tif"| Should be $true
         }
     }
 }
