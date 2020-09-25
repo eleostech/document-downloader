@@ -57,11 +57,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\corey\\Desktop\\Eleos_Project\\MockServer\\MockServer\\MockServer.csproj",
+      "projectUniqueName": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
       "projectName": "MockServer",
-      "projectPath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\MockServer\\MockServer\\MockServer.csproj",
+      "projectPath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
       "packagesPath": "C:\\Users\\corey\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\MockServer\\MockServer\\obj\\",
+      "outputPath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\corey\\AppData\\Roaming\\NuGet\\NuGet.Config",
