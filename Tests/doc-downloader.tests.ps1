@@ -24,10 +24,9 @@ Describe "Helper Function Tests" {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
             $CurrentDate = Get-Date -Format yyyy-MM-dd
             $filename = ("Eleos-" + ($CurrentDate + ".log"))
-            $path = $src + "\Tests\" + $filename
+            $path = $src + "\Tests\"
             $filepath  = CreateLogFile $path
-            Test-Path $filepath | should be $true 
-            Get-ChildItem ($src + '\Tests\*log')  | ForEach-Object {Remove-Item $_}
+            $filepath -like ($path + "Eleos-*log") | Should be $true
         }
   
         it 'CreateDownloadFile should produce filename with correct extension' { 
