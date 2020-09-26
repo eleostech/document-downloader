@@ -28,3 +28,18 @@ Given everything above, PowerShell 4.0 (https://docs.microsoft.com/en-us/previou
 ## Let's build it
 
 Other than that, build the script _you'd_ want if you needed something that worked reliably, failed obviously, and was easy to understand and modify at 10pm on a Friday when a co-worker calls you, panicked, because they are not getting new documents from "The Eleos."
+
+
+## Test Suite
+
+The Tests folder contains a set of unit tests for each method in the doc-downloader.functions.ps1. To run this test suite you must have Pester installed. The unit make calls to an ASP.net core API "Mock Server" found in the MockServer directory so this must also be installed for the test suite to pass. 
+
+### Steps to run:
+1. Start the "Mock Server" API in IIS Express. 
+2. Run test suite in powershell.
+3. Stop "Mock Server" API. 
+
+### Dependencies:
+- Pester
+- .Net Framework
+- IIS Express 
