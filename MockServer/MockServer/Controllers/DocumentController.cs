@@ -72,7 +72,8 @@ namespace MockServer.Controllers
         [Route("/api/v1/documents/queued/1")]
         public Metadata DownloadDoc()
         {
-            StreamReader r = new StreamReader(@"C:\Users\corey\Desktop\Eleos_Project\MockServer\MockServer\Payloads\payload.json");
+            var directory = Environment.CurrentDirectory;
+            StreamReader r = new StreamReader(directory + @"\Payloads\payload.json");
             string json = r.ReadToEnd();
             var metadata = JsonConvert.DeserializeObject<Metadata>(json);
             Response.ContentType = "application/json";
