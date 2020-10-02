@@ -49,7 +49,7 @@ WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $log_file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 $file_count = 0
 do{
-    WriteToLog ("Calling " + $URI + "`r`n") $LOG_FILE
+    WriteToLog ("Calling " + $BASE_URI + "`r`n") $LOG_FILE
     $URI = $BASE_URI + "/api/v1/documents/queued/next"
     try{ 
         WriteToLog "Getting Next Document in Queue..." $LOG_FILE
@@ -57,6 +57,7 @@ do{
         If ($response.StatusCode -eq 302){
             WriteToLog "Found Document in Queue..." $LOG_FILE
             $redirect = $BASE_URI + $response.Headers["Location"]
+            WriteToLog ("Redirecting to URL " + $redirect) $LOG_FILE
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
@@ -64,13 +65,16 @@ do{
             $file_count++
             try{
                 $filename = GetFilename $downloadURI $file_count
+                WriteToLog ("Downloading file " + $filename + " ...." + "`r`n") $LOG_FILE
                 wget $downloadURI -OutFile $FILE_DIR/$filename
+                WriteToLog ("File " + $filename + "  downloaded successfully to " + $FILE_DIR) $LOG_FILE
             }
             catch{
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
                 break
             }
             
+            WriteToLog ("Attempting to delete document " + $redirect + " from the Queue`r`n") $LOG_FILE
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
             If ($removeDoc){
                 WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n") $LOG_FILE
