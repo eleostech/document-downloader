@@ -19,6 +19,7 @@ $ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
 
 $HEADERS =  $ELEOS_HEADERS
 
+
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
@@ -35,38 +36,6 @@ Describe "Helper Function Tests" {
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
             $filename.Contains(".jpg") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(zip)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".zip") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(png)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".png") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(pdf)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".pdf") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(tif)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".tif") | should be $true
         }
 
         it 'ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion' {
