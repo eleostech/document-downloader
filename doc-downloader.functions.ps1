@@ -95,6 +95,7 @@ function ExponentialDeleteRetry
 function ExtractFilenameFromHeader
 {param ([string]$downloadURI)
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
+    $WebRequest.Timeout = 1000
     $Response = $WebRequest.GetResponse()
     $dispositionHeader = $Response.Headers['Content-Disposition']
     $disposition = [System.Net.Mime.ContentDisposition]::new($dispositionHeader)
@@ -108,7 +109,7 @@ function GetFilename
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
     $Response = $WebRequest.GetResponse()
     $contentDisposition = $Response.Headers['Content-Disposition']
-    if($contentDisposition -and $contentDisposition.Contains("filename=") -and $contentDisposition.Contains("attachment; filename=")){
+    if($contentDisposition -and $contentDisposition.Contains("attachment; filename=")){
         return ExtractFilenameFromHeader $downloadURI
     }
     else {
