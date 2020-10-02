@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "fMxdINRN8A/oqrSLyquDhr+o/CA/xFY5ti+7umRIJYubb9HrTok7bTd926RZNx4ydgSGTsJP9wIk3LZAGtoXng==",
+  "dgSpecHash": "erPzjxiqjlT5awTCDWLSonCCCVzcYHXg0WxOHUx1ar1D4EVQTRyA+ZwNQFZLM4KpVlIZTBg70Mp87l967gRKrw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\xaubr\\OneDrive\\Desktop\\Eleos_Stuff\\EleosDocDowloader_Code\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
+  "projectFilePath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\xaubr\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+    "C:\\Users\\corey\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
   ],
   "logs": []
 }

@@ -93,24 +93,29 @@ function ExponentialDeleteRetry
 
 
 function ExtractFilenameFromHeader
-{param ([string]$downloadURI)
+{param ([string]$downloadURI, [string]$log_file)
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
-    $WebRequest.Timeout = 1000
-    $Response = $WebRequest.GetResponse()
-    $dispositionHeader = $Response.Headers['Content-Disposition']
-    $disposition = [System.Net.Mime.ContentDisposition]::new($dispositionHeader)
-    $Response.Dispose()
-    $file = $disposition.FileName
-    return $file
+    try {
+        $WebRequest.Timeout = 6000000
+        $Response = $WebRequest.GetResponse()
+        $dispositionHeader = $Response.Headers['Content-Disposition']
+        $disposition = [System.Net.Mime.ContentDisposition]::new($dispositionHeader)
+        $Response.Dispose()
+        $file = $disposition.FileName
+        return $file
+    }
+    catch {
+        WriteToLog ($_."An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
+    }
 }
 
 function GetFilename
-{param ([string] $downloadURI, [int32]$file_count)
+{param ([string] $downloadURI, [int32]$file_count, [string]$log_file)
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
     $Response = $WebRequest.GetResponse()
     $contentDisposition = $Response.Headers['Content-Disposition']
     if($contentDisposition -and $contentDisposition.Contains("attachment; filename=")){
-        return ExtractFilenameFromHeader $downloadURI
+        return ExtractFilenameFromHeader $downloadURI $log_file
     }
     else {
         return CreateDownloadFile $downloadURI $file_count
