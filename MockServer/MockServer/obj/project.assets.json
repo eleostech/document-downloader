@@ -52,19 +52,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\corey\\.nuget\\packages\\": {}
+    "C:\\Users\\xaubr\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
+      "projectUniqueName": "C:\\Users\\xaubr\\OneDrive\\Desktop\\Eleos_Stuff\\EleosDocDowloader_Code\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
       "projectName": "MockServer",
-      "projectPath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
-      "packagesPath": "C:\\Users\\corey\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\corey\\Desktop\\Eleos_Project\\document-downloader\\MockServer\\MockServer\\obj\\",
+      "projectPath": "C:\\Users\\xaubr\\OneDrive\\Desktop\\Eleos_Stuff\\EleosDocDowloader_Code\\document-downloader\\MockServer\\MockServer\\MockServer.csproj",
+      "packagesPath": "C:\\Users\\xaubr\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\xaubr\\OneDrive\\Desktop\\Eleos_Stuff\\EleosDocDowloader_Code\\document-downloader\\MockServer\\MockServer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\corey\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\xaubr\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -111,7 +111,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
