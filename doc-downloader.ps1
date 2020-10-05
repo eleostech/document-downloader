@@ -64,7 +64,7 @@ do{
             WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
             $file_count++
             try{
-                $filename = GetFilename $downloadURI $file_count
+                $filename = GetFilename $downloadURI $file_count $LOG_FILE
                 WriteToLog ("Downloading file " + $filename + " ...." + "`r`n") $LOG_FILE
                 wget $downloadURI -OutFile $FILE_DIR/$filename
                 WriteToLog ("File " + $filename + "  downloaded successfully to " + $FILE_DIR) $LOG_FILE
