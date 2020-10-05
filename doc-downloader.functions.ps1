@@ -96,7 +96,7 @@ function ExtractFilenameFromHeader
 {param ([string]$downloadURI, [string]$log_file)
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
     try {
-        $WebRequest.Timeout = 6000000
+        $WebRequest.Timeout = 5000
         $Response = $WebRequest.GetResponse()
         $dispositionHeader = $Response.Headers['Content-Disposition']
         $disposition = [System.Net.Mime.ContentDisposition]::new($dispositionHeader)
