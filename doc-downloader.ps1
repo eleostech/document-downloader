@@ -43,7 +43,11 @@ CheckDirectory $FILE_DIR
 $log_file = (CreateLogFile $LOG_DIR)
 # Creates Timestamp for LOG file
 $Timestamp = Get-Date -format "dd-MM-yyyy HH:mm:s"
+<<<<<<< HEAD
 WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $log_file
+=======
+WriteToLog ("`r`nScript Executed at: " + $Timestamp + "`r`n") $LOG_FILE
+>>>>>>> parent of 3761514 (Changing some logic in GetFilename)
 
 # Starts Timer for LOG file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()

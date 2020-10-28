@@ -113,12 +113,21 @@ function ExtractFilenameFromHeader
 }
 
 function GetFilename
+<<<<<<< HEAD
 {param ([string] $downloadURI, [int32]$file_count, [string]$log_file)
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
     $Response = $WebRequest.GetResponse()
     $contentDisposition = $Response.Headers['Content-Disposition']
     if($contentDisposition -and $contentDisposition.Contains("attachment; filename=")){
         return ExtractFilenameFromHeader $downloadURI $file_count $log_file
+=======
+{ param ([string] $downloadURI, [int32]$file_count)
+    $content = wget $downloadURI
+    $contentDisposition = $content.Headers.'Content-Disposition'
+    if($contentDisposition -and $contentDisposition.Contains("filename=")){
+        $contentDisposition = $content.Headers.'Content-Disposition'
+        return ExtractFilenameFromHeader $contentDisposition
+>>>>>>> parent of 3761514 (Changing some logic in GetFilename)
     }
     else {
         return CreateDownloadFile $downloadURI $file_count
