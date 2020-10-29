@@ -10,29 +10,6 @@ function CreateLogFile
     return $filepath
 }
 
-function CreateDownloadFile 
-{param([string] $downloadURI, [int32] $file_count)
-    $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
-
-    if($downloadURI.Contains(".zip")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
-    }
-    elseif ($downloadURI.Contains(".pdf")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
-    }
-    elseif ($downloadURI.Contains(".tif")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.tif')
-    }
-
-    elseif ($downloadURI.Contains(".png")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.png')
-    }
-    elseif ($downloadURI.Contains(".jpg")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.jpg')
-    }
-    return $filename
-} 
-
 function WriteToLog
 {param([string]$TextToWrite, [string]$file)  
     $TextToWrite | Out-File $file -Append
@@ -49,7 +26,7 @@ function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
     if($ProcessError){
-        WriteToLog $ProcessError
+        WriteToLog $ProcessError $LOG_FILE
     }
     return $response
 }
@@ -91,48 +68,50 @@ function ExponentialDeleteRetry
     return $null
 }
 
+function GetFilename
+{param ([string] $downloadURI, [int32]$file_count, [string]$log_file)
+    try{
+        return ExtractFilenameFromHeader $downloadURI $file_count $log_file
+    }
+    catch {
+        WriteToLog ($_."An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
+        return CreateDownloadFile $downloadURI $file_count
+    }
+}
 
 function ExtractFilenameFromHeader
 {param ([string]$downloadURI, [int32]$file_count, [string]$log_file)
     $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
-    try {
-        $WebRequest.Timeout = 5000
-        $Response = $WebRequest.GetResponse()
-        $dispositionHeader = $Response.Headers['Content-Disposition']
-        $disposition = [System.Net.Mime.ContentDisposition]::new($dispositionHeader)
-        $Response.Dispose()
-        $file = $disposition.FileName
-        return $file
-    }
-    catch {
-        WriteToLog ($_."An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
-        $file = (CreateDownloadFile $downloadURI $file_count)
-        WriteToLog ("filename generated from $downloadURI : $file`r`n") $log_file
-        return $file
-    }
+    $Response = $WebRequest.GetResponse()
+    $dispositionHeader = $Response.Headers['Content-Disposition']
+    $disposition = [System.Net.Mime.ContentDisposition]::new($dispositionHeader)
+    $Response.Dispose()
+    $file = $disposition.FileName
+     return $file
 }
 
-function GetFilename
-<<<<<<< HEAD
-{param ([string] $downloadURI, [int32]$file_count, [string]$log_file)
-    $WebRequest = [System.Net.WebRequest]::Create($downloadURI)
-    $Response = $WebRequest.GetResponse()
-    $contentDisposition = $Response.Headers['Content-Disposition']
-    if($contentDisposition -and $contentDisposition.Contains("attachment; filename=")){
-        return ExtractFilenameFromHeader $downloadURI $file_count $log_file
-=======
-{ param ([string] $downloadURI, [int32]$file_count)
-    $content = wget $downloadURI
-    $contentDisposition = $content.Headers.'Content-Disposition'
-    if($contentDisposition -and $contentDisposition.Contains("filename=")){
-        $contentDisposition = $content.Headers.'Content-Disposition'
-        return ExtractFilenameFromHeader $contentDisposition
->>>>>>> parent of 3761514 (Changing some logic in GetFilename)
+function CreateDownloadFile 
+{param([string] $downloadURI, [int32] $file_count)
+    $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
+
+    if($downloadURI.Contains(".zip")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
     }
-    else {
-        return CreateDownloadFile $downloadURI $file_count
+    elseif ($downloadURI.Contains(".pdf")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
     }
-}
+    elseif ($downloadURI.Contains(".tif")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.tif')
+    }
+
+    elseif ($downloadURI.Contains(".png")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.png')
+    }
+    elseif ($downloadURI.Contains(".jpg")){
+        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.jpg')
+    }
+    return $filename
+} 
 
 #----------------------------------------------------------------------------------------------------------
 # Eleos API Consumer Functions
