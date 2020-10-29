@@ -90,10 +90,12 @@ do{
     catch [System.Net.WebException]{
         WriteToLog ("An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
     }
+    WriteToLog("------------------------") $log_file
 }
 while($response.StatusCode -eq 302)
 
 # Ends Timer for LOG file
 $Timer.Stop()
+WriteToLog("------------------------") $log_file
 WriteToLog ("Script total run time: " + $Timer.Elapsed.ToString()) $log_file
 WriteToLog ($file_count.ToString() + " documents downloaded." + "`r`n") $log_file
