@@ -14,10 +14,8 @@ if((Test-Path $testfile) -ne $True){
 
 $API_KEY = "Placeholder"
 
-$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
+$HEADERS = @{ Authorization = ("key=" + $API_KEY)
                     Accept = 'application/json'}
-
-$HEADERS =  $ELEOS_HEADERS
 
 
 Describe "Helper Function Tests" {
@@ -58,12 +56,12 @@ Describe "Helper Function Tests" {
 
         it 'GetFilename should not crash and return a filename if Content-Disposition header does not exist' {
             $downloadURI = $BASE_URI + '/api/download/mock_server_file.png'
-            $filename = GetFilename $downloadURI 1
+            $filename = GetFilename $downloadURI 1 $testfile
             $filename -like "Eleos-*png" | Should be $true
         }
         it 'GetFilename should not crash and return a filename called Eleos-<Date and time>.tif' {
             $downloadURI = $BASE_URI + '/api/content-disp/somefile.tif'
-            $filename = GetFilename $downloadURI 0
+            $filename = GetFilename $downloadURI 0 $testfile
             $filename -like "Eleos-*tif"| Should be $true
         }
     }
