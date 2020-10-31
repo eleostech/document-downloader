@@ -10,12 +10,18 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
+$DATED_FOLDERS = $false #if set to true, files will be downloaded into dated folders
 $API_KEY = "HCq568VGsoFaP81iYz3PiAtWTOF4fdpwuBJCQKddw3p"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
 $LOG_DIR = "C:\Eleos\Logs\"
 $date = (Get-Date -Format "MM-dd").ToString()
-$FILE_DIR = $DESTINATION_PATH + $date + "\"
+
+If($DATED_FOLDERS) {
+    $FILE_DIR = $DESTINATION_PATH + $date + "\"
+}
+Else {
+    $FILE_DIR = $DESTINATION_PATH + "Documents\" }
 
 $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
                          Accept = 'application/json'}
