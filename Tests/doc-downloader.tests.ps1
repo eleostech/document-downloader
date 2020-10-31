@@ -1,7 +1,6 @@
 $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $src = Split-Path -Path $here -Parent
 . $src\doc-downloader.functions.ps1
-$proj = Split-Path -Path $src -Parent
 
 
 $BASE_URI = 'https://localhost:44373'
@@ -21,8 +20,6 @@ $HEADERS = @{ Authorization = ("key=" + $API_KEY)
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
-            $CurrentDate = Get-Date -Format yyyy-MM-dd
-            $filename = ("Eleos-" + ($CurrentDate + ".log"))
             $path = $src + "\Tests\"
             $filepath  = CreateLogFile $path
             $filepath -like ($path + "Eleos-*log") | Should be $true
@@ -84,7 +81,7 @@ Describe "Consume API Function Tests" {
             $request = $BASE_URI + '/api/v1/documents/queued/next/fail'
             $exception = $false
             try {
-                $response = GetNextDoc $request $HEADERS $testfile
+                GetNextDoc $request $HEADERS $testfile
             }
             catch {
                 $exception = $_.CategoryInfo.Reason -eq 'WebException' 
