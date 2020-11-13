@@ -7,7 +7,11 @@
  jobs:
    build:
      executor: win/default     
+     shell: powershell.exe
     
      steps:
        - checkout
-       - run: dotnet build
+       - run: start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+       - run: .\Tests\doc-downloader.tests.ps1
+       - run: Receive-Job 1 
+
