@@ -10,12 +10,18 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
+$DATED_FOLDERS = $false #if set to true, files will be downloaded into dated folders
 $API_KEY = "HCq568VGsoFaP81iYz3PiAtWTOF4fdpwuBJCQKddw3p"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files
 $LOG_DIR = "C:\Eleos\Logs\"
 $date = (Get-Date -Format "MM-dd").ToString()
-$FILE_DIR = $DESTINATION_PATH + $date + "\"
+
+If($DATED_FOLDERS) {
+    $FILE_DIR = $DESTINATION_PATH + $date + "\"
+}
+Else {
+    $FILE_DIR = $DESTINATION_PATH + "Documents\" }
 
 $DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
                          Accept = 'application/json'}
@@ -49,51 +55,53 @@ WriteToLog ("Script Executed at: " + $Timestamp + "`r`n") $log_file
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 $file_count = 0
 do{
-    WriteToLog ("Calling " + $BASE_URI + "`r`n") $LOG_FILE
     $URI = $BASE_URI + "/api/v1/documents/queued/next"
+    WriteToLog ("Calling " + $URI + "`r`n") $log_file
     try{ 
-        WriteToLog "Getting Next Document in Queue..." $LOG_FILE
-        $response = GetNextDoc $URI $HEADERS $LOG_FILE
+        WriteToLog "Getting Next Document in Queue..." $log_file
+        $response = GetNextDoc $URI $HEADERS $log_file
         If ($response.StatusCode -eq 302){
-            WriteToLog "Found Document in Queue..." $LOG_FILE
+            WriteToLog "Found Document in Queue..." $log_file
             $redirect = $BASE_URI + $response.Headers["Location"]
-            WriteToLog ("Redirecting to URL " + $redirect) $LOG_FILE
-            $queuedDoc = GetDocFromQueue $redirect $HEADERS $LOG_FILE
+            WriteToLog ("Redirecting to URL " + $redirect) $log_file
+            $queuedDoc = GetDocFromQueue $redirect $HEADERS $log_file
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $downloadURI = $queuedDoc.download_url
-            WriteToLog ("Downloading Document from " + $downloadURI) $LOG_FILE
+            WriteToLog ("Downloading Document from " + $downloadURI) $log_file
             $file_count++
             try{
-                $filename = GetFilename $downloadURI $file_count
-                WriteToLog ("Downloading file " + $filename + " ...." + "`r`n") $LOG_FILE
-                wget $downloadURI -OutFile $FILE_DIR/$filename
-                WriteToLog ("File " + $filename + "  downloaded successfully to " + $FILE_DIR) $LOG_FILE
+                $filename = GetFilename $downloadURI $file_count $log_file
+                WriteToLog ("Downloading file " + $filename + " ...." + "`r`n") $log_file
+                Invoke-WebRequest $downloadURI -OutFile $FILE_DIR/$filename
+                WriteToLog ("File " + $filename + "  downloaded successfully to " + $FILE_DIR) $log_file
             }
             catch{
-                WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $LOG_FILE
+                WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $log_file
                 break
             }
             
-            WriteToLog ("Attempting to delete document " + $redirect + " from the Queue`r`n") $LOG_FILE
-            $removeDoc = RemoveDocFromQueue $redirect $HEADERS $LOG_FILE
+            WriteToLog ("Attempting to delete document " + $redirect + " from the Queue`r`n") $log_file
+            $removeDoc = RemoveDocFromQueue $redirect $HEADERS $log_file
             If ($removeDoc){
-                WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n") $LOG_FILE
+                WriteToLog ("Document Removed from Queue with Status Code: " + $removeDoc.StatusCode + "`r`n") $log_file
             }
             Else{
-                WriteToLog ("Error Removing Document from the Queue after several attempts`r`n") $LOG_FILE
+                WriteToLog ("Error Removing Document from the Queue after several attempts`r`n") $log_file
             }
         }
         Else{
-            WriteToLog ("No Documents in Queue: Response returned " + $response.StatusCode + "`r`n") $LOG_FILE
+            WriteToLog ("No Documents in Queue: Response returned " + $response.StatusCode + "`r`n") $log_file
         }
     }
     catch [System.Net.WebException]{
-        WriteToLog ("An exception has occured: " + $_.Exception.Message + "`r`n") $LOG_FILE
+        WriteToLog ("An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
     }
+    WriteToLog("------------------------") $log_file
 }
 while($response.StatusCode -eq 302)
 
 # Ends Timer for LOG file
 $Timer.Stop()
-WriteToLog ("Script total run time: " + $Timer.Elapsed.ToString()) $LOG_FILE
-WriteToLog ($file_count.ToString() + " documents downloaded." + "`r`n") $LOG_FILE
+WriteToLog("------------------------") $log_file
+WriteToLog ("Script total run time: " + $Timer.Elapsed.ToString()) $log_file
+WriteToLog ($file_count.ToString() + " documents downloaded." + "`r`n") $log_file
