@@ -5,9 +5,12 @@ $proj = Split-Path -Path $src -Parent
 
 
 Describe 'Some Tests' {
+    $i = 0
+    while($i -le 10){
     Mock 'Invoke-WebRequest' {
       $json = Get-Content ($proj +"\document-downloader\MockServer\MockServer\Payloads\payload.json")
       return $json | ConvertFrom-Json 
+      $i++
     }
 
     Mock 'GetDocFromQueue' {
