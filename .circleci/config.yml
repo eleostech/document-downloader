@@ -6,8 +6,9 @@
 
  jobs:
    build:
-     executor: win/default     
-     shell: powershell.exe
+     executor: 
+      name: win/default     
+      shell: powershell.exe
     
      steps:
        - checkout
