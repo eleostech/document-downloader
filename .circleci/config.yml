@@ -13,7 +13,8 @@
      steps:
        - checkout
        - run: | 
-          start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
-       - run: .\Tests\doc-downloader.tests.ps1
-       - run: Receive-Job 1 
+          $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+          Start-Sleep 10  
+          Receive-Job $job
+          .\Tests\doc-downloader.tests.ps1
 
