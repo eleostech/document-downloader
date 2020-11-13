@@ -1,7 +1,6 @@
 $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $src = Split-Path -Path $here -Parent
 . $src\doc-downloader.functions.ps1
-$proj = Split-Path -Path $src -Parent
 
 
 $BASE_URI = 'https://localhost:44373'
@@ -14,16 +13,13 @@ if((Test-Path $testfile) -ne $True){
 
 $API_KEY = "Placeholder"
 
-$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
+$HEADERS = @{ Authorization = ("key=" + $API_KEY)
                     Accept = 'application/json'}
 
-$HEADERS =  $ELEOS_HEADERS
 
 Describe "Helper Function Tests" {
     Context 'Verifying helper functions produce correct output' {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
-            $CurrentDate = Get-Date -Format yyyy-MM-dd
-            $filename = ("Eleos-" + ($CurrentDate + ".log"))
             $path = $src + "\Tests\"
             $filepath  = CreateLogFile $path
             $filepath -like ($path + "Eleos-*log") | Should be $true
@@ -35,38 +31,6 @@ Describe "Helper Function Tests" {
             $queuedDoc = $queuedDoc | ConvertFrom-Json
             $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
             $filename.Contains(".jpg") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(zip)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".zip") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(png)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".png") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(pdf)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".pdf") | should be $true
-        }
-
-        it 'CreateDownloadFile should produce filename with correct extension(tif)' { 
-            $URI = $BASE_URI + '/api/v1/documents/queued/1'
-            $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
-            $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-            $filename.Contains(".tif") | should be $true
         }
 
         it 'ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion' {
@@ -89,12 +53,12 @@ Describe "Helper Function Tests" {
 
         it 'GetFilename should not crash and return a filename if Content-Disposition header does not exist' {
             $downloadURI = $BASE_URI + '/api/download/mock_server_file.png'
-            $filename = GetFilename $downloadURI 1
+            $filename = GetFilename $downloadURI 1 $testfile
             $filename -like "Eleos-*png" | Should be $true
         }
         it 'GetFilename should not crash and return a filename called Eleos-<Date and time>.tif' {
             $downloadURI = $BASE_URI + '/api/content-disp/somefile.tif'
-            $filename = GetFilename $downloadURI 0
+            $filename = GetFilename $downloadURI 0 $testfile
             $filename -like "Eleos-*tif"| Should be $true
         }
     }
@@ -117,7 +81,7 @@ Describe "Consume API Function Tests" {
             $request = $BASE_URI + '/api/v1/documents/queued/next/fail'
             $exception = $false
             try {
-                $response = GetNextDoc $request $HEADERS $testfile
+                GetNextDoc $request $HEADERS $testfile
             }
             catch {
                 $exception = $_.CategoryInfo.Reason -eq 'WebException' 
