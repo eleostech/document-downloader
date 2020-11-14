@@ -12,8 +12,6 @@
     
      steps:
        - checkout
-       - run: dotnet dev-certs https
-       - run: dotnet dev-certs https --trust
        - run: |
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
           $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
