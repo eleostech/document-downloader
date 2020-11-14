@@ -3,7 +3,7 @@ $src = Split-Path -Path $here -Parent
 . $src\doc-downloader.functions.ps1
 
 
-$BASE_URI = 'https://localhost:5001'
+$BASE_URI = 'http://localhost:5000'
 
 $testfile = ($here + "\LogFile.txt")
 
