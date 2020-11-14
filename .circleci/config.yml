@@ -12,7 +12,7 @@
     
      steps:
        - checkout
-       - run: sudo security set-key-partition-list -D localhost -S unsigned:,teamid:UBF8T346G9
+       - run: dotnet dev-certs https
        - run: dotnet dev-certs https --trust
        - run: |
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
