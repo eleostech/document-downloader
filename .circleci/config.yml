@@ -13,7 +13,7 @@
      steps:
        - checkout
        - run: |
-          dotnet dev-certs https
+          dotnet dev-certs https --trust
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
           $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
           Start-Sleep 10  
