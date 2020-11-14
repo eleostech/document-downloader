@@ -12,7 +12,6 @@
     
      steps:
        - checkout
-       - run: dotnet dev-certs https
        - run: sudo security set-key-partition-list -D localhost -S unsigned:,teamid:UBF8T346G9
        - run: dotnet dev-certs https --trust
        - run: |
