@@ -12,9 +12,11 @@
     
      steps:
        - checkout
-       - run: | 
+       - run: |
+          dotnet build C:\Users\circleci\project\MockServer\MockServer 
           $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
           Start-Sleep 10  
           Receive-Job $job
           .\Tests\doc-downloader.tests.ps1
+          dotnet clean C:\Users\circleci\project\MockServer\MockServer 
 
