@@ -13,6 +13,7 @@
      steps:
        - checkout
        - run: |
+          Get-Host | Select-Object Version 
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
           $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
           Start-Sleep 10  
