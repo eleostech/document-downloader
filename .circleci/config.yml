@@ -13,7 +13,7 @@
      steps:
        - checkout
        - run: $PSVersionTable.PSVersion
-       - run: Install-Module -Name Pester
+       - run: Install-Module -Name Pester -Force
        - run: |      
           Get-Host | Select-Object Version 
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
