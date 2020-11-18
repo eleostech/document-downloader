@@ -12,13 +12,8 @@
     
      steps:
        - checkout
-       - run: |
-          $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
-          takeown /F $module /A /R
-          icacls $module /reset
-          icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
-          Remove-Item -Path $module -Recurse -Force -Confirm:$false
-          Install-Module -Name Pester -Force
+       - run: $PSVersionTable.PSVersion
+       - run: Install-Module -Name Pester
        - run: |      
           Get-Host | Select-Object Version 
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
