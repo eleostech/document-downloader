@@ -23,8 +23,7 @@
           icacls $modulePath /reset 
           icacls $modulePath /grant Administrators:'F' /inheritance:d /T
           Remove-Item -Path $modulePath -Recurse -Force -Confirm:$false
-       - run: Install-Module -Name Pester -Force 
-       - run: |      
+          Install-Module -Name Pester -Force  
           Get-Host | Select-Object Version 
           dotnet build C:\Users\circleci\project\MockServer\MockServer 
           $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
