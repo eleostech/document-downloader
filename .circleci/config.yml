@@ -11,28 +11,28 @@
       shell: powershell.exe
     
      steps:
-       - checkout
-       - run: $PSVersionTable.PSVersion
-       - run: |
-          $modulePath = "C:\Program Files\WindowsPowerShell\Modules\Pester"
-          if (-not (Test-Path $modulePath)) {
-          "There is no Pester folder in $modulePath, doing nothing."
-          break
-          }
-          takeown /F $modulePath /A /R
-          icacls $modulePath /reset 
-          icacls $modulePath /grant Administrators:'F' /inheritance:d /T
-          Remove-Item -Path $modulePath -Recurse -Force -Confirm:$false
-        - run: |
-          $module = "C:\Program Files (x86)\WindowsPowerShell\Modules\Pester"
-          takeown /F $module /A /R
-          icacls $module /reset
-          icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
-          Remove-Item -Path $module -Recurse -Force -Confirm:$false
-        -run: |
-          Install-Module -Name Pester -Force  
-          dotnet build C:\Users\circleci\project\MockServer\MockServer 
-          $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
-          Start-Sleep 10  
-          Receive-Job $job
-          .\Tests\doc-downloader.tests.ps1
+      - checkout
+      - run: $PSVersionTable.PSVersion
+      - run: |
+        $modulePath = "C:\Program Files\WindowsPowerShell\Modules\Pester"
+        if (-not (Test-Path $modulePath)) {
+        "There is no Pester folder in $modulePath, doing nothing."
+        break
+        }
+        takeown /F $modulePath /A /R
+        icacls $modulePath /reset 
+        icacls $modulePath /grant Administrators:'F' /inheritance:d /T
+        Remove-Item -Path $modulePath -Recurse -Force -Confirm:$false
+      - run: |
+        $module = "C:\Program Files (x86)\WindowsPowerShell\Modules\Pester"
+        takeown /F $module /A /R
+        icacls $module /reset
+        icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
+        Remove-Item -Path $module -Recurse -Force -Confirm:$false
+      -run: |
+        Install-Module -Name Pester -Force  
+        dotnet build C:\Users\circleci\project\MockServer\MockServer 
+        $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+        Start-Sleep 10  
+        Receive-Job $job
+        .\Tests\doc-downloader.tests.ps1
