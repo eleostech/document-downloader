@@ -30,6 +30,6 @@ jobs:
          Start-Sleep 10
          Invoke-Pester -Script .\Tests\doc-downloader.tests.ps1 -OutputFile .\Tests\Test.xml
       - store_test_results:
-          path: .\Tests\Tests.xml
+          path: .\Tests\
       - store_artifacts:
           path: .\Tests\Tests.xml 
