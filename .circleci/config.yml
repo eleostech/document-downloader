@@ -28,4 +28,7 @@ jobs:
          dotnet build C:\Users\circleci\project\MockServer\MockServer 
          $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
          Start-Sleep 10
-         .\Tests\doc-downloader.tests.ps1
+         Invoke-Pester -Script .\Tests\doc-downloader.tests.ps1
+      - store_test_results:
+        path:
+          Tests\Tests.xml

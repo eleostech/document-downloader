@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="17" errors="0" failures="16" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2020-11-23" time="17:57:12">
+  <environment clr-version="4.0.30319.42000" user-domain="DESKTOP-OAE44F2" cwd="C:\Users\corey\Desktop\Eleos_Project\document-downloader" platform="Microsoft Windows 10 Home|C:\WINDOWS|\Device\Harddisk0\Partition3" machine-name="DESKTOP-OAE44F2" nunit-version="2.5.8.0" os-version="10.0.19041" user="corey" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Failure" success="False" time="4.0519" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1" executed="True" result="Failure" success="False" time="4.0519" asserts="0" description="C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="All Function Tests" executed="True" result="Failure" success="False" time="2.5846" asserts="0" description="All Function Tests">
+            <results>
+              <test-suite type="TestFixture" name="All Function Tests.Helper Function Tests" executed="True" result="Failure" success="False" time="1.577" asserts="0" description="All Function Tests.Helper Function Tests">
+                <results>
+                  <test-suite type="TestFixture" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output" executed="True" result="Failure" success="False" time="1.5414" asserts="0" description="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output">
+                    <results>
+                      <test-case description="CreateLogFile should produce a log filename corresponding to todays date" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.CreateLogFile should produce a log filename corresponding to todays date" time="0.8053" asserts="0" success="True" result="Success" executed="True" />
+                      <test-case description="CreateDownloadFile should produce filename with correct extension(jpg)" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.CreateDownloadFile should produce filename with correct extension(jpg)" time="0.1454" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'GetDocFromQueue' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:64</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion" time="0.0436" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'ExtractFilenameFromHeader' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:72</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="ExtractFilenameFromHeader should only produce a string that matches the filename" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.ExtractFilenameFromHeader should only produce a string that matches the filename" time="0.0403" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'ExtractFilenameFromHeader' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:77</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="ExtractFilenameFromHeader should produce a string that matches a filename if the filename has delimeters" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.ExtractFilenameFromHeader should produce a string that matches a filename if the filename has delimeters" time="0.0401" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'ExtractFilenameFromHeader' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:84</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetFilename should not crash and return a filename if Content-Disposition header does not exist" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.GetFilename should not crash and return a filename if Content-Disposition header does not exist" time="0.0456" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'GetFilename' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:90</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetFilename should not crash and return a filename called Eleos-&lt;Date and time&gt;.tif" name="All Function Tests.Helper Function Tests.Verifying helper functions produce correct output.GetFilename should not crash and return a filename called Eleos-&lt;Date and time&gt;.tif" time="0.0701" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'GetFilename' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:95</stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="All Function Tests.Consume API Function Tests" executed="True" result="Failure" success="False" time="2.4329" asserts="0" description="All Function Tests.Consume API Function Tests">
+                <results>
+                  <test-suite type="TestFixture" name="All Function Tests.Consume API Function Tests.Testing GetNextDoc function" executed="True" result="Failure" success="False" time="0.4021" asserts="0" description="All Function Tests.Consume API Function Tests.Testing GetNextDoc function">
+                    <results>
+                      <test-case description="GetNextDoc should return a 302 if there is a document in the queue" name="All Function Tests.Consume API Function Tests.Testing GetNextDoc function.GetNextDoc should return a 302 if there is a document in the queue" time="0.0453" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'GetNextDoc' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:105</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetNextDoc should return a 304 if there is not a document in the queue" name="All Function Tests.Consume API Function Tests.Testing GetNextDoc function.GetNextDoc should return a 304 if there is not a document in the queue" time="0.0613" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'GetNextDoc' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:110</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetNextDoc should throw an expection if a 404 status code is returned" name="All Function Tests.Consume API Function Tests.Testing GetNextDoc function.GetNextDoc should throw an expection if a 404 status code is returned" time="0.2171" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>Expected $true, but got $false.
+at $exception | Should -Be $true, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:123</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:123</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetNextDoc should throw an exception if a 500 status code is returned" name="All Function Tests.Consume API Function Tests.Testing GetNextDoc function.GetNextDoc should throw an exception if a 500 status code is returned" time="0.0476" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>Expected $true, but got $false.
+at $exception | Should -Be $true, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:136</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:136</stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="All Function Tests.Consume API Function Tests.Testing GetDocFromQueue function" executed="True" result="Failure" success="False" time="0.5917" asserts="0" description="All Function Tests.Consume API Function Tests.Testing GetDocFromQueue function">
+                    <results>
+                      <test-case description="GetDocFromQueue should return a 200 with a URL to download document" name="All Function Tests.Consume API Function Tests.Testing GetDocFromQueue function.GetDocFromQueue should return a 200 with a URL to download document" time="0.0518" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'GetDocFromQueue' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:143</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetDocFromQueue should throw an exception if a 404 status code is returned" name="All Function Tests.Consume API Function Tests.Testing GetDocFromQueue function.GetDocFromQueue should throw an exception if a 404 status code is returned" time="0.0499" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>Expected $true, but got $false.
+at $exception | Should -Be $true, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:158</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:158</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="GetDocFromQueue should throw an exception if a 500 status code is returned" name="All Function Tests.Consume API Function Tests.Testing GetDocFromQueue function.GetDocFromQueue should throw an exception if a 500 status code is returned" time="0.0569" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>Expected $true, but got $false.
+at $exception | Should -Be $true, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:170</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:170</stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="All Function Tests.Consume API Function Tests.Testing RemoveDocFromQueue function" executed="True" result="Failure" success="False" time="0.7157" asserts="0" description="All Function Tests.Consume API Function Tests.Testing RemoveDocFromQueue function">
+                    <results>
+                      <test-case description="RemoveDocFromQueue should return a 200 if a document was successfully removed from the queue" name="All Function Tests.Consume API Function Tests.Testing RemoveDocFromQueue function.RemoveDocFromQueue should return a 200 if a document was successfully removed from the queue" time="0.0479" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'RemoveDocFromQueue' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:177</stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case description="RemoveDocFromQueue should return null if the document to be removed could not be found" name="All Function Tests.Consume API Function Tests.Testing RemoveDocFromQueue function.RemoveDocFromQueue should return null if the document to be removed could not be found" time="0.0453" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'RemoveDocFromQueue' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:183</stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                  <test-suite type="TestFixture" name="All Function Tests.Consume API Function Tests.Testing ExponentialDeleteRetry function" executed="True" result="Failure" success="False" time="0.8253" asserts="0" description="All Function Tests.Consume API Function Tests.Testing ExponentialDeleteRetry function">
+                    <results>
+                      <test-case description="ExpWait should return a null if the document is never removed after the multiple retires due to 404 not found" name="All Function Tests.Consume API Function Tests.Testing ExponentialDeleteRetry function.ExpWait should return a null if the document is never removed after the multiple retires due to 404 not found" time="0.0657" asserts="0" success="False" result="Failure" executed="True">
+                        <failure>
+                          <message>CommandNotFoundException: The term 'ExponentialDeleteRetry' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</message>
+                          <stack-trace>at &lt;ScriptBlock&gt;, C:\Users\corey\Desktop\Eleos_Project\document-downloader\Tests\doc-downloader.tests.ps1:191</stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

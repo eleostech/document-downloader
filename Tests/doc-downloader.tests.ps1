@@ -1,7 +1,8 @@
+#Import-Module .\doc-downloader.functions.ps1
+
 $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $src = Split-Path -Path $here -Parent
 . $src\doc-downloader.functions.ps1
-
 
 $BASE_URI = 'http://localhost:5000'
 
@@ -16,8 +17,41 @@ $API_KEY = "Placeholder"
 $HEADERS = @{ Authorization = ("key=" + $API_KEY)
                     Accept = 'application/json'}
 
+Describe "All Function Tests" {
 
 Describe "Helper Function Tests" {
+
+    BeforeAll {
+        function CreateLogFile
+        {param([string]$Dir)
+            $CurrentTime = Get-Date -Format yyyy-MM-dd
+            $filename = ("Eleos-" + ($CurrentTime + ".log"))
+            $filepath = ($DIR + $filename)
+            return $filepath
+        }
+        function CreateDownloadFile 
+        {param([string] $downloadURI, [int32] $file_count)
+            $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
+
+            if($downloadURI.Contains(".zip")){
+                $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
+            }
+            elseif ($downloadURI.Contains(".pdf")){
+                $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
+            }
+            elseif ($downloadURI.Contains(".tif")){
+                $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.tif')
+            }
+
+            elseif ($downloadURI.Contains(".png")){
+                $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.png')
+            }
+            elseif ($downloadURI.Contains(".jpg")){
+                $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.jpg')
+            }
+            return $filename
+        }
+    }
     Context 'Verifying helper functions produce correct output' {
         it 'CreateLogFile should produce a log filename corresponding to todays date' {
             $path = $src + "\Tests\"
@@ -158,4 +192,5 @@ Describe "Consume API Function Tests" {
             $response | should -Be $null
         }
     }
+}
 }
