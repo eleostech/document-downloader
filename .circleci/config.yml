@@ -31,3 +31,5 @@ jobs:
          Invoke-Pester -Script .\Tests\doc-downloader.tests.ps1 -OutputFile Tests\Test.xml
       - store_test_results:
           path: Tests\Tests.xml
+      - store-artifacts:
+          path: Tests\Test.xml
