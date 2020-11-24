@@ -24,7 +24,9 @@ function CheckDirectory
 
 function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+    $ProgressPreference = 'SilentlyContinue'
     $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    #$ProgressPreference = 'Continue'   
     if($ProcessError){
         WriteToLog $ProcessError $LOG_FILE
     }
@@ -35,7 +37,9 @@ function  MakeHttpGetCall
 function  MakeHttpDeleteCall 
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
+        $ProgressPreference = 'SilentlyContinue'
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -Method Delete
+        #$ProgressPreference = 'Continue'
         return $response
     }
     catch{
