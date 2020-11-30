@@ -98,25 +98,17 @@ function ExtractFilenameFromHeader
 function CreateDownloadFile 
 {param([string] $downloadURI, [int32] $file_count)
     $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
+    $index = $downloadURI.IndexOf("filename");
 
-    if($downloadURI.Contains(".zip")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
-    }
-    elseif ($downloadURI.Contains(".pdf")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
-    }
-    elseif ($downloadURI.Contains(".tif")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.tif')
-    }
+    $sub = $downloadURI.Substring($index, ($downloadURI.Length - $index))
+    $subList = $sub.Split("%")
 
-    elseif ($downloadURI.Contains(".png")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.png')
+    foreach ($element in $subList) {
+        if($element -like "*.*") {
+            return $element
+        }
     }
-    elseif ($downloadURI.Contains(".jpg")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.jpg')
-    }
-    return $filename
-} 
+}
 
 #----------------------------------------------------------------------------------------------------------
 # Eleos API Consumer Functions
