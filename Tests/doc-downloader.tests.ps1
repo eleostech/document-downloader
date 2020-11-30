@@ -28,12 +28,12 @@ Describe "All Function Tests" {
                 $filepath -like ($path + "Eleos-*log") | Should -Be $true
             }
     
-            it 'CreateDownloadFile should produce filename with correct extension(jpg)' { 
+            it 'CreateDownloadFile should produce filename with correct extension(zip)' { 
                 $URI = $BASE_URI + '/api/v1/documents/queued/1'
                 $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
                 $queuedDoc = $queuedDoc | ConvertFrom-Json
                 $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
-                $filename.Contains(".jpg") | should -Be $true
+                $filename -like "*.zip" | should -Be $true
             }
 
             it 'ExtractFilenameFromHeader should produce a string that matches the name of file in Content-Dispostion' {
@@ -52,12 +52,6 @@ Describe "All Function Tests" {
                 $downloadURI = $BASE_URI + "/api/download/multipledelimeter"
                 $filename = ExtractFilenameFromHeader $downloadURI
                 $filename | Should -Be "_NA__NA__; 2020-09.zip"
-            }
-
-            it 'GetFilename should not crash and return a filename if Content-Disposition header does not exist' {
-                $downloadURI = $BASE_URI + '/api/download/mock_server_file.png'
-                $filename = GetFilename $downloadURI 1 $testfile
-                $filename -like "Eleos-*png" | Should -Be $true
             }
         }
     }
