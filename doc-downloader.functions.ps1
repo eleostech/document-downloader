@@ -103,11 +103,16 @@ function CreateDownloadFile
     $sub = $downloadURI.Substring($index, ($downloadURI.Length - $index))
     $subList = $sub.Split("%")
 
-    foreach ($element in $subList) {
+    foreach ($element in $newSub) {
         if($element -like "*.*") {
-            return $element
+            $index = $element.lastIndexOf(".")
+            $extension = $element.Substring($index, $element.Length - $index)
+            break
         }
     }
+
+    $filename = "Eleos-" + $CurrentDate + "_" + $file_count + $extension
+    return $filename
 }
 
 #----------------------------------------------------------------------------------------------------------
