@@ -6,7 +6,7 @@
     "YOUR-FIELD": "example value"
   },
   "scanned_by_email": "jeff.tobin@example.com",
-  "download_url": "https://apod.nasa.gov/apod/image/0003/hh111_hst_big.jpg",
+  "download_url": "https://axle-staging.s3-external-1.amazonaws.com/packaged-tiffs/748f0170-14f5-0139-7600-4a842316cd76-789.zip?AWSAccessKeyId=AKIAYKFM34B2EPESFCOT&Signature=S7QrWtvXHX0bvW9s4hA0XY0r1kc%3D&Expires=1606777938&response-content-disposition=attachment%3B%20filename%3D%22_UNK__NA__2020-11-30T045019Z_57220.zip%22",
   "scanned_by_username": "TOBJE9090",
   "scanned_by": "Jeff Tobb",
   "upload_finished_at": "2019-08-11T20:15:22.2313+00:00",
