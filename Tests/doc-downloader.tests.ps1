@@ -59,11 +59,6 @@ Describe "All Function Tests" {
                 $filename = GetFilename $downloadURI 1 $testfile
                 $filename -like "Eleos-*png" | Should -Be $true
             }
-            it 'GetFilename should not crash and return a filename called Eleos-<Date and time>.tif' {
-                $downloadURI = $BASE_URI + '/api/content-disp/somefile.tif'
-                $filename = GetFilename $downloadURI 0 $testfile
-                $filename -like "Eleos-*tif"| Should -Be $true
-            }
         }
     }
 
