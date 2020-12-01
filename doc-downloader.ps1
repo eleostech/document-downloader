@@ -10,7 +10,7 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 #----------------------------------------------------------------------------------------------------------
 
 $DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
-$DATED_FOLDERS = $false #if set to true, files will be downloaded into dated folders
+$DATED_FOLDERS = $true #if set to true, files will be downloaded into dated folders
 $API_KEY = "***REMOVED***"
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files

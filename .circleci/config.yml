@@ -1,13 +1,31 @@
+version: 2.1
 
- version: 2.1
-
- orbs:
+orbs:
   win: circleci/windows@2.2.0
 
- jobs:
-   build:
-     executor: win/default     
-    
-     steps:
-       - checkout
-       - run: dotnet build
+jobs:
+  build:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run: |
+         $module = "C:\Program Files (x86)\WindowsPowerShell\Modules\Pester"
+         takeown /F $module /A /R
+         icacls $module /reset
+         icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
+         Remove-Item -Path $module -Recurse -Force -Confirm:$false
+      - run: |
+         $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
+         takeown /F $module /A /R
+         icacls $module /reset
+         icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
+         Remove-Item -Path $module -Recurse -Force -Confirm:$false
+      - run: |
+         Install-Module -Name Pester -Force  
+         Get-Host | Select-Object Version 
+         dotnet build C:\Users\circleci\project\MockServer\MockServer 
+         $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+         Start-Sleep 10
+         .\Tests\doc-downloader.tests.ps1

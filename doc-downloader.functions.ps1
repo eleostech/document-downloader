@@ -24,7 +24,9 @@ function CheckDirectory
 
 function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
+    $ProgressPreference = 'SilentlyContinue'
     $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    #$ProgressPreference = 'Continue'   
     if($ProcessError){
         WriteToLog $ProcessError $LOG_FILE
     }
@@ -35,7 +37,9 @@ function  MakeHttpGetCall
 function  MakeHttpDeleteCall 
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
+        $ProgressPreference = 'SilentlyContinue'
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -Method Delete
+        #$ProgressPreference = 'Continue'
         return $response
     }
     catch{
@@ -94,25 +98,22 @@ function ExtractFilenameFromHeader
 function CreateDownloadFile 
 {param([string] $downloadURI, [int32] $file_count)
     $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
+    $index = $downloadURI.IndexOf("filename");
 
-    if($downloadURI.Contains(".zip")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.zip')
-    }
-    elseif ($downloadURI.Contains(".pdf")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.pdf')
-    }
-    elseif ($downloadURI.Contains(".tif")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.tif')
+    $sub = $downloadURI.Substring($index, ($downloadURI.Length - $index))
+    $subList = $sub.Split("%")
+
+    foreach ($element in $newSub) {
+        if($element -like "*.*") {
+            $index = $element.lastIndexOf(".")
+            $extension = $element.Substring($index, $element.Length - $index)
+            break
+        }
     }
 
-    elseif ($downloadURI.Contains(".png")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.png')
-    }
-    elseif ($downloadURI.Contains(".jpg")){
-        $filename = ("Eleos-" + $CurrentDate.ToString() + '_' + $file_count.ToString() + '.jpg')
-    }
+    $filename = "Eleos-" + $CurrentDate + "_" + $file_count + $extension
     return $filename
-} 
+}
 
 #----------------------------------------------------------------------------------------------------------
 # Eleos API Consumer Functions
@@ -146,3 +147,4 @@ function RemoveDocFromQueue
     }
     return $response
 }
+
