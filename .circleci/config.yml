@@ -26,7 +26,7 @@ jobs:
       - run: |
           Write-Host (Split-Path -Path $PSScriptRoot)
           $ProgressPreference = 'SilentlyContinue';
-          Compress-Archive -Path "C:\Users\circleci\project\README.md", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
+          Compress-Archive -Path "C:\Users\circleci\project\README.txt", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
       - store_artifacts:
           path: document-downloader.zip
           destination: document-downloader.zip
