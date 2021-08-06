@@ -2,9 +2,9 @@ $Config = Get-Content "configurations.json" | ConvertFrom-Json
 
 
 ###  Configuration variables found in configurations.json
-$API_KEY = $Config.api_key 
-$BASE_URL = $Config.base_url 
-
+$API_KEY = $Config.api_key
+$BASE_URL = $Config.base_url
+$DRIVE_AXLE = $Config.drive_axle_customer
 
 # Eleos Document Downloader Script
 # This script fetches queued documents from the Eleos API and downloads them into a folder on local machine
@@ -17,7 +17,6 @@ $here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
 # Constants
 #----------------------------------------------------------------------------------------------------------
 
-$DRIVE_AXLE = $false # If Drive Axle Hub Customer - this value should be $true, otherwise $false
 $DATED_FOLDERS = $true #if set to true, files will be downloaded into dated folders
 
 $DESTINATION_PATH = "C:\Eleos\" # Desired destination folder for the downloaded files

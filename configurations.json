@@ -1,4 +1,5 @@
 {
-    "api_key" : "placeholder",
-    "base_url" : "https://squid-fortress-staging.eleostech.com"
+    "api_key" : "your API key",
+    "drive_axle_customer" : false,
+    "base_url" : "https://platform.driveaxleapp.com"
 }
