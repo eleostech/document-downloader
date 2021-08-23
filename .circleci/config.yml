@@ -11,21 +11,22 @@ jobs:
     steps:
       - checkout
       - run: |
-         $module = "C:\Program Files (x86)\WindowsPowerShell\Modules\Pester"
-         takeown /F $module /A /R
-         icacls $module /reset
-         icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
-         Remove-Item -Path $module -Recurse -Force -Confirm:$false
+          $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
+          takeown /F $module /A /R
+          icacls $module /reset
+          icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
+          Remove-Item -Path $module -Recurse -Force -Confirm:$false
       - run: |
-         $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
-         takeown /F $module /A /R
-         icacls $module /reset
-         icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
-         Remove-Item -Path $module -Recurse -Force -Confirm:$false
+          Install-Module -Name Pester -Force  
+          Get-Host | Select-Object Version 
+          dotnet build C:\Users\circleci\project\MockServer\MockServer 
+          $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+          Start-Sleep 10
+          .\Tests\doc-downloader.tests.ps1
       - run: |
-         Install-Module -Name Pester -Force  
-         Get-Host | Select-Object Version 
-         dotnet build C:\Users\circleci\project\MockServer\MockServer 
-         $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
-         Start-Sleep 10
-         .\Tests\doc-downloader.tests.ps1
+          Write-Host (Split-Path -Path $PSScriptRoot)
+          $ProgressPreference = 'SilentlyContinue';
+          Compress-Archive -Path "C:\Users\circleci\project\README.md", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
+      - store_artifacts:
+          path: document-downloader.zip
+          destination: document-downloader.zip
