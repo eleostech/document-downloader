@@ -11,8 +11,14 @@ function CreateLogFile
 }
 
 function WriteToLog
-{param([string]$TextToWrite, [string]$file)  
-    $TextToWrite | Out-File $file -Append
+{param([string]$TextToWrite, [string]$file)
+    $powershellVersion = (Get-Host).Version.Major
+    if($powershellVersion -eq 7){
+        $TextToWrite | Out-File -FilePath $file -Append
+    }
+    else {
+        $TextToWrite | Out-File $file -Append
+    }
 }
 
 function CheckDirectory
@@ -25,8 +31,14 @@ function CheckDirectory
 function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $ProgressPreference = 'SilentlyContinue'
-    $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
-    #$ProgressPreference = 'Continue'   
+    $powershellVersion = (Get-Host).Version.Major
+    if($powershellVersion -eq 7){
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHttpErrorCheck
+    }
+    else {
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    }
+    #$ProgressPreference = 'Continue'
     if($ProcessError){
         WriteToLog $ProcessError $LOG_FILE
     }
