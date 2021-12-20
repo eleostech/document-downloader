@@ -29,11 +29,13 @@ If($DATED_FOLDERS) {
 Else {
     $FILE_DIR = $DESTINATION_PATH}
 
-$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY) 
-                         Accept = 'application/json'}
+$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY)
+                         Accept = 'application/json'
+                         ContentType = 'application/json'}
 
-$ELEOS_HEADERS = @{ Authorization = ("key=" + $API_KEY)
-                    Accept = 'application/json'}
+$ELEOS_HEADERS = @{ Authorization = ("Key key=" + $API_KEY)
+                    Accept = 'application/json'
+                    ContentType = 'application/json'}
 
 $HEADERS = If ($DRIVE_AXLE) { $DRIVE_AXLE_HEADERS } Else { $ELEOS_HEADERS }
 
