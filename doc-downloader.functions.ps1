@@ -13,7 +13,7 @@ function CreateLogFile
 function WriteToLog
 {param([string]$TextToWrite, [string]$file)
     $powershellVersion = (Get-Host).Version.Major
-    if($powershellVersion -eq 7){
+    if($powershellVersion -ge 7){
         $TextToWrite | Out-File -FilePath $file -Append
     }
     else {
@@ -32,7 +32,7 @@ function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $ProgressPreference = 'SilentlyContinue'
     $powershellVersion = (Get-Host).Version.Major
-    if($powershellVersion -eq 7){
+    if($powershellVersion -ge 7){
         $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHttpErrorCheck
     }
     else {
