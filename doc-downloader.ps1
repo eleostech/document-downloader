@@ -76,17 +76,18 @@ do{
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $log_file
             $file_count++
+
             try{
                 $filename = GetFilename $downloadURI $file_count $log_file
                 WriteToLog ("Downloading file " + $filename + " ...." + "`r`n") $log_file
-                Invoke-WebRequest $downloadURI -OutFile $FILE_DIR/$filename
+                DownloadFile $downloadURI $FILE_DIR/$filename $log_file
                 WriteToLog ("File " + $filename + "  downloaded successfully to " + $FILE_DIR) $log_file
             }
             catch{
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $log_file
                 break
             }
-            
+
             WriteToLog ("Attempting to delete document " + $redirect + " from the Queue`r`n") $log_file
             $removeDoc = RemoveDocFromQueue $redirect $HEADERS $log_file
             If ($removeDoc){

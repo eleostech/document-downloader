@@ -46,17 +46,42 @@ function  MakeHttpGetCall
 }
 
 
-function  MakeHttpDeleteCall 
+function  MakeHttpDeleteCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
         $ProgressPreference = 'SilentlyContinue'
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -Method Delete
-        #$ProgressPreference = 'Continue'
+        $powershellVersion = (Get-Host).Version.Major
+        if($powershellVersion -ge 7){
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -SkipHttpErrorCheck -ErrorAction SilentlyContinue
+        }
+        else {
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -ErrorAction SilentlyContinue
+        }
+
         return $response
     }
     catch{
         return $null
     }
+}
+
+function DownloadFile
+{param([string]$URI, [string]$OutFilePath, [string]$LOG_FILE)
+    $powershellVersion = (Get-Host).Version.Major
+    if($powershellVersion -ge 7){
+        $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath -SkipHttpErrorCheck
+    }
+    else {
+        $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath
+    }
+
+    # if the call to download the file resultsed in a 403, delete the downloaded file
+    if(Select-String -Path $OutFilePath -Pattern "AccessDenied") {
+        WriteToLog "File has already been purged, thus cannot be downloaded. Sending delete request and moving on to the next document..." $LOG_FILE
+        Remove-Item -Path $OutFilePath
+    }
+
+    return $response
 }
 
 function ExponentialDeleteRetry
