@@ -46,17 +46,38 @@ function  MakeHttpGetCall
 }
 
 
-function  MakeHttpDeleteCall 
+function  MakeHttpDeleteCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     try{
         $ProgressPreference = 'SilentlyContinue'
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -Method Delete
-        #$ProgressPreference = 'Continue'
+        $powershellVersion = (Get-Host).Version.Major
+        if($powershellVersion -ge 7){
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -SkipHttpErrorCheck -ErrorAction SilentlyContinue
+        }
+        else {
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -ErrorAction SilentlyContinue
+        }
+
         return $response
     }
     catch{
         return $null
     }
+}
+
+function DownloadFile
+{param([string]$URI, [string]$FileName, [string]$OutFilePath, [string]$LOG_FILE)
+  try {
+    $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath/$FileName
+    WriteToLog ("File " + $FileName + "  downloaded successfully to " + $OutFilePath) $LOG_FILE
+  } catch {
+    if($_.Exception.Response.StatusCode.Value__.ToString() -like '4**') {
+      WriteToLog("Error while downloading document, status code: " + $_.Exception.Response.StatusCode.Value__.ToString() + ". The document may have already been purged, moving onto next document...") $LOG_FILE
+    }
+    else {
+      throw $_
+    }
+  }
 }
 
 function ExponentialDeleteRetry
