@@ -66,12 +66,13 @@ function  MakeHttpDeleteCall
 }
 
 function DownloadFile
-{param([string]$URI, [string]$OutFilePath, [string]$LOG_FILE)
+{param([string]$URI, [string]$FileName, [string]$OutFilePath, [string]$LOG_FILE)
   try {
-    $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath
+    $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath/$FileName
+    WriteToLog ("File " + $FileName + "  downloaded successfully to " + $OutFilePath) $LOG_FILE
   } catch {
-    if($_.Exception.Response.StatusCode.Value__ -eq 403) {
-      WriteToLog("Document has already been purged, marking the document as delted and moving on to the next one...")
+    if($_.Exception.Response.StatusCode.Value__.ToString() -like '4**') {
+      WriteToLog("Error while downloading document, status code: " + $_.Exception.Response.StatusCode.Value__.ToString() + ". The document may have already been purged, moving onto next document...") $LOG_FILE
     }
     else {
       throw $_

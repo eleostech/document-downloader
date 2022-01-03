@@ -80,8 +80,7 @@ do{
             try{
                 $filename = GetFilename $downloadURI $file_count $log_file
                 WriteToLog ("Downloading file " + $filename + " ...." + "`r`n") $log_file
-                DownloadFile $downloadURI $FILE_DIR/$filename $log_file
-                WriteToLog ("File " + $filename + "  downloaded successfully to " + $FILE_DIR) $log_file
+                DownloadFile $downloadURI $filename $FILE_DIR $log_file
             }
             catch{
                 WriteToLog ($_.Exception.Message + "`r`n" + "Error Occured at: " + (Get-Date -format "MM-dd-yyyy HH:mm:s").ToString() + "`r`n") $log_file
