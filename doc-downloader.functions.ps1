@@ -32,11 +32,10 @@ function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $ProgressPreference = 'SilentlyContinue'
     $powershellVersion = (Get-Host).Version.Major
-    if($powershellVersion -ge 7){
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHttpErrorCheck
-    }
-    else {
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    try {
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction Stop -ErrorVariable $ProcessError
+    } catch {
+        $response = $_.Exception.Response
     }
     #$ProgressPreference = 'Continue'
     if($ProcessError){

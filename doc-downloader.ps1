@@ -64,12 +64,12 @@ $file_count = 0
 do{
     $URI = $BASE_URL + "/api/v1/documents/queued/next"
     WriteToLog ("Calling " + $URI + "`r`n") $log_file
-    try{ 
+    try{
         WriteToLog "Getting Next Document in Queue..." $log_file
         $response = GetNextDoc $URI $HEADERS $log_file
         If ($response.StatusCode -eq 302){
             WriteToLog "Found Document in Queue..." $log_file
-            $redirect = $BASE_URL + $response.Headers["Location"]
+            $redirect = $BASE_URL + $response.Headers.Location
             WriteToLog ("Redirecting to URL " + $redirect) $log_file
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $log_file
             $queuedDoc = $queuedDoc | ConvertFrom-Json
