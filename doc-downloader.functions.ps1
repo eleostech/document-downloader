@@ -33,10 +33,10 @@ function  MakeHttpGetCall
     $ProgressPreference = 'SilentlyContinue'
     $powershellVersion = (Get-Host).Version.Major
     if($powershellVersion -ge 7){
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHttpErrorCheck
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHttpErrorCheck -SkipHeaderValidation
     }
     else {
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHeaderValidation
     }
     #$ProgressPreference = 'Continue'
     if($ProcessError){
@@ -52,10 +52,10 @@ function  MakeHttpDeleteCall
         $ProgressPreference = 'SilentlyContinue'
         $powershellVersion = (Get-Host).Version.Major
         if($powershellVersion -ge 7){
-            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -SkipHttpErrorCheck -ErrorAction SilentlyContinue
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -SkipHttpErrorCheck -ErrorAction SilentlyContinue -SkipHeaderValidation
         }
         else {
-            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -ErrorAction SilentlyContinue
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -ErrorAction SilentlyContinue -SkipHeaderValidation
         }
 
         return $response
@@ -68,7 +68,7 @@ function  MakeHttpDeleteCall
 function DownloadFile
 {param([string]$URI, [string]$FileName, [string]$OutFilePath, [string]$LOG_FILE)
   try {
-    $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath/$FileName
+    $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath/$FileName -SkipHeaderValidation
     WriteToLog ("File " + $FileName + "  downloaded successfully to " + $OutFilePath) $LOG_FILE
   } catch {
     if($_.Exception.Response.StatusCode.Value__.ToString() -like '4**') {
