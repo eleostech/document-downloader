@@ -4,7 +4,7 @@ orbs:
   win: circleci/windows@2.2.0
 
 jobs:
-  build:
+  build_powershell_five:
     executor:
       name: win/default
       shell: powershell.exe
@@ -31,3 +31,71 @@ jobs:
       - store_artifacts:
           path: document-downloader.zip
           destination: document-downloader.zip
+  build_powershell_six:
+      executor:
+        name: win/default
+        shell: powershell.exe
+      steps:
+        - checkout
+        - run: |
+            choco install powershell-core --version=6.2.4
+            pwsh.exe
+        - run: |
+            $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
+            takeown /F $module /A /R
+            icacls $module /reset
+            icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
+            Remove-Item -Path $module -Recurse -Force -Confirm:$false
+        - run: |
+            Install-Module -Name Pester -Force  
+            Get-Host | Select-Object Version 
+            dotnet build C:\Users\circleci\project\MockServer\MockServer 
+            $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+            Start-Sleep 10
+            .\Tests\doc-downloader.tests.ps1
+            .\Tests\drive-axle-doc-downloader.tests.ps1
+        - run: |
+            Write-Host (Split-Path -Path $PSScriptRoot)
+            $ProgressPreference = 'SilentlyContinue';
+            Compress-Archive -Path "C:\Users\circleci\project\README.txt", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
+        - store_artifacts:
+            path: document-downloader.zip
+            destination: document-downloader.zip
+  build_powershell_seven:
+      executor:
+        name: win/default
+        shell: powershell.exe
+      steps:
+        - checkout
+        - run: |
+            choco install powershell-core
+            pwsh.exe
+        - run: |
+            $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
+            takeown /F $module /A /R
+            icacls $module /reset
+            icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
+            Remove-Item -Path $module -Recurse -Force -Confirm:$false
+        - run: |
+            Install-Module -Name Pester -Force  
+            Get-Host | Select-Object Version 
+            dotnet build C:\Users\circleci\project\MockServer\MockServer 
+            $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
+            Start-Sleep 10
+            .\Tests\doc-downloader.tests.ps1
+            .\Tests\drive-axle-doc-downloader.tests.ps1
+        - run: |
+            Write-Host (Split-Path -Path $PSScriptRoot)
+            $ProgressPreference = 'SilentlyContinue';
+            Compress-Archive -Path "C:\Users\circleci\project\README.txt", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
+        - store_artifacts:
+            path: document-downloader.zip
+            destination: document-downloader.zip
+
+workflows:
+  version: 2
+  build_with_powershell_versions:
+    jobs:
+      - build_powershell_five
+      - build_powershell_six
+      - build_powershell_seven
