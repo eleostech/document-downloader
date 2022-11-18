@@ -43,10 +43,10 @@ jobs:
             choco uninstall powershell-core
 
             choco install powershell-core --version=6.2.4
-            
-            powershell.exe
 
-            pwsh.exe
+            cd 'C:\Program Files\PowerShell\6'
+
+            .\pwsh.exe
         - run: |
             $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
             takeown /F $module /A /R
