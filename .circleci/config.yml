@@ -38,7 +38,14 @@ jobs:
       steps:
         - checkout
         - run: |
+            choco install powershell-core
+
+            choco uninstall powershell-core
+
             choco install powershell-core --version=6.2.4
+            
+            powershell.exe
+
             pwsh.exe
         - run: |
             $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
