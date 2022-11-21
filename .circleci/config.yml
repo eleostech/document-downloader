@@ -69,7 +69,7 @@ jobs:
       - powershell_version_setup:
           powershell_setup_steps:
             - run: |
-                choco install powershell-core
+                choco install powershell-core --version=7.3.0
                 pwsh.exe
       - run_tests
 
