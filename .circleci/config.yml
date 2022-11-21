@@ -3,16 +3,18 @@ version: 2.1
 orbs:
   win: circleci/windows@2.2.0
 
-jobs:
-  build:
-    executor:
-      name: win/default
-      shell: powershell.exe
+commands:
+  powershell_version_setup:
+    parameters:
+      powershell_setup_steps:
+        description: setup steps needed for the configured powershell version to run
+        type: steps
+        default: []
     steps:
-      - checkout
-      - run: 
-          command: |
-            << parameters.powershell_version_setup >>
+      - steps: << parameters.powershell_setup_steps >>
+        
+  run_tests:
+    steps:
       - run: |
           $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
           takeown /F $module /A /R
@@ -35,12 +37,49 @@ jobs:
           path: document-downloader.zip
           destination: document-downloader.zip
 
+jobs:
+  build_powershell_five:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run_tests
+  build_powershell_six:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - powershell_version_setup:
+          powershell_setup_steps:
+            - run: |
+                choco install powershell-core
+                choco uninstall powershell-core
+                choco install powershell-core --version=6.2.4
+                cd 'C:\Program Files\PowerShell\6'
+                .\pwsh.exe
+      - run_tests
+  build_powershell_seven:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - powershell_version_setup:
+          powershell_setup_steps:
+            - run: |
+                choco install powershell-core
+                pwsh.exe
+      - run_tests
+
 
 workflows:
   version: 2
   build_with_powershell_versions:
     jobs:
-      - build:
-          matrix:
-            parameters:
-              powershell_version_setup: ["$PSVersionTable"]
+      - build_powershell_five
+      - build_powershell_six
+      - build_powershell_seven
+          
+
