@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  # If you update this value, be sure to check that build_powershell_five is still getting Powershell 5
   win: circleci/windows@2.2.0
 
 commands:
@@ -29,13 +30,6 @@ commands:
           Start-Sleep 10
           .\Tests\doc-downloader.tests.ps1
           .\Tests\drive-axle-doc-downloader.tests.ps1
-      - run: |
-          Write-Host (Split-Path -Path $PSScriptRoot)
-          $ProgressPreference = 'SilentlyContinue';
-          Compress-Archive -Path "C:\Users\circleci\project\README.txt", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
-      - store_artifacts:
-          path: document-downloader.zip
-          destination: document-downloader.zip
 
 jobs:
   build_powershell_five:
@@ -72,6 +66,19 @@ jobs:
                 choco install powershell-core --version=7.3.0
                 pwsh.exe
       - run_tests
+  store_artifacts:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run: |
+          Write-Host (Split-Path -Path $PSScriptRoot)
+          $ProgressPreference = 'SilentlyContinue';
+          Compress-Archive -Path "C:\Users\circleci\project\README.txt", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
+      - store_artifacts:
+          path: document-downloader.zip
+          destination: document-downloader.zip
 
 
 workflows:
@@ -81,5 +88,6 @@ workflows:
       - build_powershell_five
       - build_powershell_six
       - build_powershell_seven
+      - store_artifacts
           
 
