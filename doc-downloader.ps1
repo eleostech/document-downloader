@@ -29,7 +29,7 @@ If($DATED_FOLDERS) {
 Else {
     $FILE_DIR = $DESTINATION_PATH}
 
-$DRIVE_AXLE_HEADERS = @{ Authorization = ("driveaxle=" + $API_KEY)
+$DRIVE_AXLE_HEADERS = @{ Authorization = ("DriveAxleKey key=" + $API_KEY)
                          Accept = 'application/json'
                          ContentType = 'application/json'}
 
