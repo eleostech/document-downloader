@@ -6,7 +6,7 @@ function CreateLogFile
 {param([string]$Dir)
     $CurrentTime = Get-Date -Format yyyy-MM-dd
     $filename = ("Eleos-" + ($CurrentTime + ".log"))
-    $filepath = ($DIR + "\" + $filename)
+    $filepath = Join-Path -Path $Dir -ChildPath $filename
     return $filepath
 }
 
