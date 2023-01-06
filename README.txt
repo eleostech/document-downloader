@@ -35,9 +35,6 @@ ument. You'll also receive a file containing metadata about the document;
 see the documentation here for details:
 <https://dev.eleostech.com/platform/platform.html#tag/Documents>
 
-Alternatively, if you would prefer to receive PDF files instead of TIFF
-images, your account can be configured to make PDFs available through
-the Drive Axle FTP gateway. However, PDF files do not contain metadata.
 The doc-downloader.ps1 script can generally be run as often as needed, but
 only one instance of the script should be run at a time.
 
