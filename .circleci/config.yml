@@ -90,4 +90,11 @@ workflows:
       - build_powershell_seven
       - store_artifacts
           
-
+nightly:
+  triggers:
+  - schedule:
+      cron: "0 8 * * *"
+      filters:
+        branches:
+          only:
+            - master
