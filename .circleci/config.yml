@@ -1,16 +1,62 @@
 version: 2.1
 
+orbs:
+  windows: circleci/windows@5.0
+
 jobs:
-  test-powershell-versions:
+  test-ps5:
+    executor:
+      name: windows/default
+      size: "medium"
+    steps:
+      - checkout
+      - run:
+          name: "Install Pester"
+          shell: powershell.exe -ExecutionPolicy Bypass
+          command: |
+            Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
+      - run:
+          name: "Build and Start MockServer"
+          shell: powershell.exe -ExecutionPolicy Bypass
+          command: |
+            dotnet build MockServer/MockServer.sln
+            $process = Start-Process dotnet -ArgumentList "run --project MockServer/MockServer/MockServer.csproj" -PassThru
+            # Wait for health check
+            for ($i=0; $i -lt 30; $i++) {
+                try {
+                    $response = Invoke-WebRequest -Uri "http://127.0.0.1:5000/api/v1/documents/queued/next/empty" -ErrorAction SilentlyContinue
+                    if ($response.StatusCode -eq 304) { break }
+                } catch { }
+                Start-Sleep -Seconds 2
+            }
+      - run:
+          name: "Run Tests (PowerShell 5.1)"
+          shell: powershell.exe -ExecutionPolicy Bypass
+          command: |
+            $env:BASE_URL = "http://127.0.0.1:5000"
+            Invoke-Pester -Path Tests/doc-downloader.tests.ps1, Tests/drive-axle-doc-downloader.tests.ps1
+
+  test-ps6:
     machine:
       image: ubuntu-2204:current
     steps:
       - checkout
       - run:
-          name: "Run Multi-Version PowerShell Tests"
-          command: ./run-version-tests.sh
+          name: "Run PowerShell 6 Tests"
+          command: ./run-version-tests.sh downloader-ps6
+
+  test-ps7:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: "Run PowerShell 7 Tests"
+          command: ./run-version-tests.sh downloader-ps7
 
 workflows:
   verify:
     jobs:
-      - test-powershell-versions
+      - test-ps5
+      - test-ps6
+      - test-ps7

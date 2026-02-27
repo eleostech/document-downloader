@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# This script runs tests for a specific PowerShell version using Docker Compose.
+# Usage: ./run-version-tests.sh [downloader-ps6|downloader-ps7]
+
+SERVICE_NAME=$1
+
+if [ -z "$SERVICE_NAME" ]; then
+    echo "Usage: $0 [downloader-ps6|downloader-ps7]"
+    exit 1
+fi
+
 # Ensure we start fresh
 echo "Stopping any existing containers..."
 docker-compose -f docker-compose.versions.yml down --remove-orphans
@@ -25,27 +35,19 @@ fi
 
 echo "MockServer is healthy!"
 
-# Run tests for PS6
-echo "Running tests in PowerShell 6..."
-docker-compose -f docker-compose.versions.yml run --rm downloader-ps6
-RESULT_PS6=$?
-
-# Run tests for PS7
-echo "Running tests in PowerShell 7..."
-docker-compose -f docker-compose.versions.yml run --rm downloader-ps7
-RESULT_PS7=$?
+# Run tests for the specified service
+echo "Running tests in $SERVICE_NAME..."
+docker-compose -f docker-compose.versions.yml run --rm $SERVICE_NAME
+RESULT=$?
 
 # Tear down
 echo "Cleaning up..."
 docker-compose -f docker-compose.versions.yml stop
 
-echo "-----------------------------------"
-echo "Results:"
-echo "PowerShell 6: $([ $RESULT_PS6 -eq 0 ] && echo 'PASSED' || echo 'FAILED')"
-echo "PowerShell 7: $([ $RESULT_PS7 -eq 0 ] && echo 'PASSED' || echo 'FAILED')"
-echo "-----------------------------------"
-
-if [ $RESULT_PS6 -ne 0 ] || [ $RESULT_PS7 -ne 0 ]; then
+if [ $RESULT -ne 0 ]; then
+    echo "Tests FAILED for $SERVICE_NAME"
     exit 1
 fi
+
+echo "Tests PASSED for $SERVICE_NAME"
 exit 0
