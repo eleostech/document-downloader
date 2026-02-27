@@ -1,40 +1,16 @@
 version: 2.1
 
-orbs:
-  windows: circleci/windows@5.0
-
 jobs:
-  test-all-ps-versions:
-    executor:
-      name: windows/default
-      size: "medium"
+  test-powershell-versions:
+    machine:
+      image: ubuntu-2204:current
     steps:
       - checkout
-
       - run:
-          name: "Setup PowerShell 6"
-          shell: powershell.exe -ExecutionPolicy Bypass
-          command: |
-            Write-Host "Downloading PowerShell 6.2.4..."
-            Invoke-WebRequest -Uri "https://github.com/PowerShell/PowerShell/releases/download/v6.2.4/PowerShell-6.2.4-win-x64.zip" -OutFile "ps6.zip"
-            Expand-Archive -Path "ps6.zip" -DestinationPath "C:\ps6"
-
-      - run:
-          name: "Verify PowerShell 5 (Windows PowerShell)"
-          shell: powershell.exe -ExecutionPolicy Bypass
-          command: powershell.exe -Command '$PSVersionTable.PSVersion'
-
-      - run:
-          name: "Verify PowerShell 6 (Core)"
-          shell: powershell.exe -ExecutionPolicy Bypass
-          command: C:\ps6\pwsh.exe -Command '$PSVersionTable.PSVersion'
-
-      - run:
-          name: "Verify PowerShell 7"
-          shell: powershell.exe -ExecutionPolicy Bypass
-          command: pwsh.exe -Command '$PSVersionTable.PSVersion'
+          name: "Run Multi-Version PowerShell Tests"
+          command: ./run-version-tests.sh
 
 workflows:
-  verify-powershell-versions:
+  verify:
     jobs:
-      - test-all-ps-versions
+      - test-powershell-versions
