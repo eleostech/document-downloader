@@ -14,14 +14,11 @@ jobs:
           name: "Run PowerShell 5.1 Tests"
           shell: powershell.exe
           command: |
-            # Try to find docker-compose or use docker compose
             if (Get-Command "docker-compose" -ErrorAction SilentlyContinue) {
-                $cmd = "docker-compose"
+                docker-compose -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
             } else {
-                $cmd = "docker compose"
+                docker compose -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
             }
-            Write-Host "Using command: $cmd"
-            & $cmd -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
 
   test-ps6:
     machine:
