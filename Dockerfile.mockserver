@@ -15,7 +15,7 @@ RUN dotnet publish "MockServer/MockServer.csproj" -c Release -o /app/publish
 
 # Final stage: Run the app
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
-# Only run apt-get if we are on a Linux-based image
+SHELL ["/bin/sh", "-c"]
 RUN if [ -f /usr/bin/apt-get ]; then apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*; fi
 WORKDIR /app
 COPY --from=build /app/publish .
