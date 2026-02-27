@@ -6,7 +6,18 @@ services:
       context: .
       dockerfile: Dockerfile.mockserver
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:5000/api/v1/documents/queued/next/empty || powershell -ExecutionPolicy Bypass -Command \"Invoke-WebRequest -Uri http://127.0.0.1:5000/api/v1/documents/queued/next/empty -UseBasicParsing\""]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/api/v1/documents/queued/next/empty"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  mockserver-ps5:
+    build:
+      context: .
+      dockerfile: Dockerfile.mockserver.ps5
+    healthcheck:
+      # Use PowerShell for healthcheck in Windows container
+      test: ["CMD", "powershell", "-ExecutionPolicy", "Bypass", "-Command", "Invoke-WebRequest -Uri http://127.0.0.1:5000/api/v1/documents/queued/next/empty -UseBasicParsing"]
       interval: 3s
       timeout: 3s
       retries: 10
@@ -36,7 +47,7 @@ services:
       context: .
       dockerfile: Dockerfile.ps5
     depends_on:
-      mockserver:
+      mockserver-ps5:
         condition: service_healthy
     environment:
-      - BASE_URL=http://mockserver:5000
+      - BASE_URL=http://mockserver-ps5:5000
