@@ -1,7 +1,8 @@
-FROM mcr.microsoft.com/powershell:5.1-windowsservercore-ltsc2022
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 # Install Pester 5
 # Note: This requires Internet connectivity during build
+# In ServerCore, powershell is the default entrypoint for RUN
 RUN powershell -Command "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -MinimumVersion 5.0.0"
 
 WORKDIR /app
