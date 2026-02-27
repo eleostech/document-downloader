@@ -14,28 +14,15 @@ jobs:
           name: "Run PowerShell 5.1 Tests"
           shell: powershell.exe
           command: |
-            $composePath = Get-Command "docker-compose" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
-            if (-not $composePath) {
-                $paths = @(
-                    "C:\Program Files\Docker\Docker\resources\bin\docker-compose.exe",
-                    "C:\Program Files\Docker\docker-compose.exe",
-                    "C:\ProgramData\DockerDesktop\bin\docker-compose.exe"
-                )
-                foreach ($p in $paths) {
-                    if (Test-Path $p) {
-                        $composePath = $p
-                        break
-                    }
-                }
-            }
-
-            if ($composePath) {
-                Write-Host "Using Compose at: $composePath"
-                & $composePath -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
+            if (-not (Get-Command "docker-compose" -ErrorAction SilentlyContinue)) {
+                Write-Host "docker-compose not found. Downloading..."
+                Invoke-WebRequest "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-windows-x86_64.exe" -OutFile "docker-compose.exe"
+                $compose = ".\docker-compose.exe"
             } else {
-                Write-Host "docker-compose.exe not found, trying 'docker compose'..."
-                docker compose -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
+                $compose = "docker-compose"
             }
+            Write-Host "Using compose command: $compose"
+            & $compose -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
 
   test-ps6:
     machine:
