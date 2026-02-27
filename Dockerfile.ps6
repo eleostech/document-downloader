@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/powershell:6.2.4-ubuntu-18.04
+
+# Install Pester 5
+RUN pwsh -c "Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck"
+
+WORKDIR /app
+COPY . .
+
+CMD ["pwsh", "-c", "Invoke-Pester -Path Tests/doc-downloader.tests.ps1, Tests/drive-axle-doc-downloader.tests.ps1"]

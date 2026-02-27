@@ -12,27 +12,31 @@ services:
       retries: 10
 
   downloader-ps6:
-    image: mcr.microsoft.com/powershell:6.2.4-ubuntu-18.04
+    build:
+      context: .
+      dockerfile: Dockerfile.ps6
     depends_on:
       mockserver:
         condition: service_healthy
     environment:
       - BASE_URL=http://mockserver:5000
-    volumes:
-      - .:/app
-    working_dir: /app
-    entrypoint: ["pwsh", "-c"]
-    command: ["Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -Scope CurrentUser; Invoke-Pester -Path Tests/doc-downloader.tests.ps1, Tests/drive-axle-doc-downloader.tests.ps1"]
 
   downloader-ps7:
-    image: mcr.microsoft.com/powershell:7.2-ubuntu-22.04
+    build:
+      context: .
+      dockerfile: Dockerfile.ps7
     depends_on:
       mockserver:
         condition: service_healthy
     environment:
       - BASE_URL=http://mockserver:5000
-    volumes:
-      - .:/app
-    working_dir: /app
-    entrypoint: ["pwsh", "-c"]
-    command: ["Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -Scope CurrentUser; Invoke-Pester -Path Tests/doc-downloader.tests.ps1, Tests/drive-axle-doc-downloader.tests.ps1"]
+
+  downloader-ps5:
+    build:
+      context: .
+      dockerfile: Dockerfile.ps5
+    depends_on:
+      mockserver:
+        condition: service_healthy
+    environment:
+      - BASE_URL=http://mockserver:5000
