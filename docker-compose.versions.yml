@@ -16,8 +16,8 @@ services:
       context: .
       dockerfile: Dockerfile.mockserver.ps5
     healthcheck:
-      # Use PowerShell for healthcheck in Windows container
-      test: ["CMD", "powershell", "-ExecutionPolicy", "Bypass", "-Command", "Invoke-WebRequest -Uri http://127.0.0.1:5000/api/v1/documents/queued/next/empty -UseBasicParsing"]
+      # Use PowerShell for healthcheck in Windows container, handling the 304 response correctly
+      test: ["CMD", "powershell", "-ExecutionPolicy", "Bypass", "-Command", "try { $resp = Invoke-WebRequest -Uri http://127.0.0.1:5000/api/v1/documents/queued/next/empty -UseBasicParsing -ErrorAction Stop; exit 0 } catch { if ($_.Exception.Response.StatusCode -eq 304) { exit 0 } else { exit 1 } }"]
       interval: 3s
       timeout: 3s
       retries: 10
