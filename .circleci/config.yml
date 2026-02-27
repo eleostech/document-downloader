@@ -11,10 +11,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Run PowerShell 5.1 Tests in Docker"
-          shell: powershell.exe -ExecutionPolicy Bypass
-          command: |
-            docker-compose -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
+          name: "Run PowerShell 5.1 Tests"
+          shell: bash.exe
+          command: ./run-version-tests.sh downloader-ps5
 
   test-ps6:
     machine:
