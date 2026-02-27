@@ -14,15 +14,21 @@ jobs:
           name: "Run PowerShell 5.1 Tests"
           shell: powershell.exe
           command: |
-            if (-not (Get-Command "docker-compose" -ErrorAction SilentlyContinue)) {
+            if ($composePath) {
+                Write-Host "Using compose command: $composePath"
+                $cmd = "$composePath -f docker-compose.versions.yml"
+            } else {
                 Write-Host "docker-compose not found. Downloading..."
                 Invoke-WebRequest "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-windows-x86_64.exe" -OutFile "docker-compose.exe"
-                $compose = ".\docker-compose.exe"
-            } else {
-                $compose = "docker-compose"
+                $cmd = ".\docker-compose.exe -f docker-compose.versions.yml"
             }
-            Write-Host "Using compose command: $compose"
-            & $compose -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
+            
+            try {
+                & { $args = "/c $cmd up --build --exit-code-from downloader-ps5 downloader-ps5"; Start-Process cmd.exe -ArgumentList $args -Wait -NoNewWindow }
+            } finally {
+                Write-Host "Tests finished. Printing MockServer logs..."
+                & { $args = "/c $cmd logs mockserver-ps5"; Start-Process cmd.exe -ArgumentList $args -Wait -NoNewWindow }
+            }
 
   test-ps6:
     machine:
