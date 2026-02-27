@@ -10,21 +10,13 @@ if [ -z "$SERVICE_NAME" ]; then
     exit 1
 fi
 
-# Function to find the available docker-compose command
-get_compose_cmd() {
-    if docker compose version >/dev/null 2>&1; then
-        echo "docker compose"
-    elif docker-compose version >/dev/null 2>&1; then
-        echo "docker-compose"
-    elif [ -f "/c/Program Files/Docker/Docker/resources/bin/docker-compose.exe" ]; then
-        echo "/c/Program Files/Docker/Docker/resources/bin/docker-compose.exe"
-    else
-        # Fallback to just docker-compose and hope for the best
-        echo "docker-compose"
-    fi
-}
+# Try 'docker compose' first, then 'docker-compose'
+if docker compose version >/dev/null 2>&1; then
+    COMPOSE_CMD="docker compose"
+else
+    COMPOSE_CMD="docker-compose"
+fi
 
-COMPOSE_CMD=$(get_compose_cmd)
 echo "Using compose command: $COMPOSE_CMD"
 
 # Ensure we start fresh

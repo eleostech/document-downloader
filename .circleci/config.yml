@@ -12,10 +12,16 @@ jobs:
       - checkout
       - run:
           name: "Run PowerShell 5.1 Tests"
-          shell: bash.exe
+          shell: powershell.exe
           command: |
-            export PATH=$PATH:"/c/Program Files/Docker/Docker/resources/bin"
-            ./run-version-tests.sh downloader-ps5
+            # Try to find docker-compose or use docker compose
+            if (Get-Command "docker-compose" -ErrorAction SilentlyContinue) {
+                $cmd = "docker-compose"
+            } else {
+                $cmd = "docker compose"
+            }
+            Write-Host "Using command: $cmd"
+            & $cmd -f docker-compose.versions.yml up --build --exit-code-from downloader-ps5 downloader-ps5
 
   test-ps6:
     machine:
