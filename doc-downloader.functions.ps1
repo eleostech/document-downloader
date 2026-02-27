@@ -37,7 +37,15 @@ function  MakeHttpGetCall
             $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -SkipHttpErrorCheck -ErrorAction SilentlyContinue
         }
         else {
-            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+            try {
+                $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction Stop
+            } catch {
+                if ($_.Exception.Response -and ($_.Exception.Response.StatusCode -eq 302 -or $_.Exception.Response.StatusCode -eq 304)) {
+                    $response = $_.Exception.Response
+                } else {
+                    throw $_
+                }
+            }
         }
         
         if ($response.StatusCode -ge 400) {

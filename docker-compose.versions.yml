@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mockserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.mockserver
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/api/v1/documents/queued/next/empty"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  downloader-ps6:
+    image: mcr.microsoft.com/powershell:6.2.4-ubuntu-18.04
+    depends_on:
+      mockserver:
+        condition: service_healthy
+    environment:
+      - BASE_URL=http://mockserver:5000
+    volumes:
+      - .:/app
+    working_dir: /app
+    entrypoint: ["pwsh", "-c"]
+    command: ["Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -Scope CurrentUser; Invoke-Pester -Path Tests/doc-downloader.tests.ps1, Tests/drive-axle-doc-downloader.tests.ps1"]
+
+  downloader-ps7:
+    image: mcr.microsoft.com/powershell:7.2-ubuntu-22.04
+    depends_on:
+      mockserver:
+        condition: service_healthy
+    environment:
+      - BASE_URL=http://mockserver:5000
+    volumes:
+      - .:/app
+    working_dir: /app
+    entrypoint: ["pwsh", "-c"]
+    command: ["Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -Scope CurrentUser; Invoke-Pester -Path Tests/doc-downloader.tests.ps1, Tests/drive-axle-doc-downloader.tests.ps1"]
