@@ -1,19 +1,26 @@
-$here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$src = Split-Path -Path $here -Parent
-. $src\doc-downloader.functions.ps1
+Describe "Consume API Function Tests" {
+    BeforeAll {
+        $script:here = Split-Path -Parent $PSCommandPath
+        $script:src = Split-Path -Path $here -Parent
+        $functionsPath = Join-Path $src "doc-downloader.functions.ps1"
+        . $functionsPath
 
-$testfile = ($here + "\LogFile.txt")
+        $envBaseUrl = $env:BASE_URL
+        if ($null -ne $envBaseUrl) {
+            $script:BASE_URL = $envBaseUrl
+        } else {
+            $script:BASE_URL = 'http://localhost:5000'
+        }
 
-$API_KEY = "api-keys-are-cool"
-$BASE_URL = 'http://localhost:5000'
-$DRIVE_AXLE_HEADERS = @{ Authorization = ("DriveAxleKey key=" + $API_KEY)
-                         Accept = 'application/json'}
+        $script:testfile = Join-Path $here "LogFile.txt"
+        $script:API_KEY = "api-keys-are-cool"
+        $script:DRIVE_AXLE_HEADERS = @{ Authorization = ("DriveAxleKey key=" + $API_KEY); Accept = 'application/json'}
                 
-if((Test-Path $testfile) -ne $True){ 
-    New-Item -Path $testfile -ItemType File
-}
+        if((Test-Path $testfile) -ne $True){ 
+            New-Item -Path $testfile -ItemType File
+        }
+    }
 
-Describe "Consume API Function Tests" {    
     Context 'Testing GetNextDoc function' {
         it 'GetNextDoc should return a 302 if there is a document in the queue' {
             $request = $BASE_URL + '/api/v1/documents/queued/next'
@@ -33,7 +40,7 @@ Describe "Consume API Function Tests" {
                 GetNextDoc $request $DRIVE_AXLE_HEADERS $testfile
             }
             catch {
-                $exception = $_.CategoryInfo.Reason -eq 'WebException' 
+                $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
             }
             $exception | Should -Be $true
         }
@@ -46,7 +53,7 @@ Describe "Consume API Function Tests" {
                 $request = GetNextDoc $request $DRIVE_AXLE_HEADERS $testfile -ErrorAction SilentlyContinue 
             } 
             catch {
-                $exception = $_.CategoryInfo.Reason -eq "WebException"
+                $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
             }
             $exception | Should -Be $true
         }
@@ -68,7 +75,7 @@ Describe "Consume API Function Tests" {
                 $request = GetNextDoc $request $DRIVE_AXLE_HEADERS $testfile -ErrorAction SilentlyContinue 
             } 
             catch {
-                $exception = $_.CategoryInfo.Reason -eq 'WebException' 
+                $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
             }
             $exception | Should -Be $true
         }
@@ -80,7 +87,7 @@ Describe "Consume API Function Tests" {
                 $request = GetNextDoc $request $DRIVE_AXLE_HEADERS $testfile -ErrorAction SilentlyContinue 
             } 
             catch {
-                $exception = $_.CategoryInfo.Reason -eq 'WebException' 
+                $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
             }
             $exception | Should -Be $true
         }
@@ -108,5 +115,3 @@ Describe "Consume API Function Tests" {
         }
     }
 }
-
-

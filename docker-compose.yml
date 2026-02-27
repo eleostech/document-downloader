@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mockserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.mockserver
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/api/v1/documents/queued/next/empty"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  downloader:
+    build:
+      context: .
+      dockerfile: Dockerfile.downloader
+    depends_on:
+      mockserver:
+        condition: service_healthy
+    environment:
+      - BASE_URL=http://mockserver:5000
+    volumes:
+      - .:/app

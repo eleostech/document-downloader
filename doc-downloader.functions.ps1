@@ -32,17 +32,29 @@ function  MakeHttpGetCall
 {param([string]$URI, [hashtable]$HEADERS, [string]$LOG_FILE)
     $ProgressPreference = 'SilentlyContinue'
     $powershellVersion = (Get-Host).Version.Major
-    if($powershellVersion -ge 7){
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError -SkipHttpErrorCheck
+    try{
+        if($powershellVersion -ge 7){
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -SkipHttpErrorCheck -ErrorAction SilentlyContinue
+        }
+        else {
+            $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue
+        }
+        
+        if ($response.StatusCode -ge 400) {
+            Write-Host "HTTP Error: $($response.StatusCode) for URI: $URI"
+            throw [System.Net.WebException]::new("WebException")
+        }
+        return $response
     }
-    else {
-        $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -MaximumRedirection 0 -ErrorAction SilentlyContinue -ErrorVariable $ProcessError
+    catch{
+        Write-Host "Caught Exception: $($_.Exception.Message)"
+        if ($_.Exception -is [System.Net.WebException]) {
+            if($LOG_FILE){ WriteToLog $_.Exception.Message $LOG_FILE }
+            throw $_
+        }
+        if($LOG_FILE){ WriteToLog $_.Exception.Message $LOG_FILE }
+        throw [System.Net.WebException]::new($_.Exception.Message)
     }
-    #$ProgressPreference = 'Continue'
-    if($ProcessError){
-        WriteToLog $ProcessError $LOG_FILE
-    }
-    return $response
 }
 
 
@@ -58,9 +70,13 @@ function  MakeHttpDeleteCall
             $response = Invoke-WebRequest -Uri $URI -Headers $HEADERS -Method Delete -ErrorAction SilentlyContinue
         }
 
+        if ($response.StatusCode -ge 400) {
+            return $null
+        }
         return $response
     }
     catch{
+        if($LOG_FILE){ WriteToLog $_.Exception.Message $LOG_FILE }
         return $null
     }
 }
@@ -68,7 +84,7 @@ function  MakeHttpDeleteCall
 function DownloadFile
 {param([string]$URI, [string]$FileName, [string]$OutFilePath, [string]$LOG_FILE)
   try {
-    $response = Invoke-WebRequest -Uri $URI -OutFile $OutFilePath/$FileName
+    $response = Invoke-WebRequest -Uri $URI -OutFile (Join-Path $OutFilePath $FileName)
     WriteToLog ("File " + $FileName + "  downloaded successfully to " + $OutFilePath) $LOG_FILE
   } catch {
     if($_.Exception.Response.StatusCode.Value__.ToString() -like '4**') {
@@ -111,7 +127,7 @@ function GetFilename
         return ExtractFilenameFromHeader $downloadURI $file_count $log_file
     }
     catch {
-        WriteToLog ($_."An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
+        WriteToLog ("An exception has occured: " + $_.Exception.Message + "`r`n") $log_file
         return CreateDownloadFile $downloadURI $file_count
     }
 }
@@ -132,15 +148,18 @@ function CreateDownloadFile
 {param([string] $downloadURI, [int32] $file_count)
     $CurrentDate = Get-Date -Format "yyyy-MM-dd_HH:mm"
     $index = $downloadURI.IndexOf("filename");
+    $extension = ".zip" # Default
 
-    $sub = $downloadURI.Substring($index, ($downloadURI.Length - $index))
-    $subList = $sub.Split("%")
+    if ($index -ge 0) {
+        $sub = $downloadURI.Substring($index, ($downloadURI.Length - $index))
+        $subList = $sub.Split("%")
 
-    foreach ($element in $subList) {
-        if($element -like "*.*") {
-            $index = $element.lastIndexOf(".")
-            $extension = $element.Substring($index, $element.Length - $index)
-            break
+        foreach ($element in $subList) {
+            if($element -like "*.*") {
+                $e_index = $element.lastIndexOf(".")
+                $extension = $element.Substring($e_index, $element.Length - $e_index)
+                break
+            }
         }
     }
 
@@ -169,7 +188,7 @@ function RemoveDocFromQueue
     $response = MakeHttpDeleteCall $URI $HEADERS $LOG_FILE
     if($response -eq $null){           
         WriteToLog ("Error Removing Document. Trying again... `r`n") $LOG_FILE
-        $retry = ExponentialDeleteRetry $redirect $HEADERS $LOG_FILE
+        $retry = ExponentialDeleteRetry $URI $HEADERS $LOG_FILE
         If($retry){
             WriteToLog ("Document Removed from Queue with Status Code: " + $retry.StatusCode + "`r`n") $LOG_FILE 
         }
@@ -180,4 +199,3 @@ function RemoveDocFromQueue
     }
     return $response
 }
-

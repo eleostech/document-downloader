@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
@@ -71,10 +71,23 @@ namespace MockServer.Controllers
         [Route("/api/v1/documents/queued/1")]
         public Metadata DownloadDoc()
         {
-            var directory = Environment.CurrentDirectory;
-            StreamReader r = new StreamReader(directory + @"\Payloads\payload.json");
-            string json = r.ReadToEnd();
-            var metadata = JsonConvert.DeserializeObject<Metadata>(json);
+            // Hardcoding metadata to avoid file path issues in Docker/Linux
+            var metadata = new Metadata
+            {
+                SentToEmail = "docs@example.com",
+                DocumentIdentifier = 101298333,
+                NumberOfPages = 2,
+                CustomMetadata = new CustomMetadata { YourField = "example value" },
+                ScannedByEmail = "jeff.tobin@example.com",
+                DownloadUrl = new Uri("https://axle-staging.s3-external-1.amazonaws.com/packaged-tiffs/748f0170-14f5-0139-7600-4a842316cd76-789.zip?AWSAccessKeyId=AKIAYKFM34B2EPESFCOT&Signature=S7QrWtvXHX0bvW9s4hA0XY0r1kc%3D&Expires=1606777938&response-content-disposition=attachment%3B%20filename%3D%22_UNK__NA__2020-11-30T045019Z_57220.zip%22"),
+                ScannedByUsername = "TOBJE9090",
+                ScannedBy = "Jeff Tobb",
+                UploadFinishedAt = DateTimeOffset.Parse("2019-08-11T20:15:22.2313+00:00"),
+                BillOfLadingNumber = "9090192ABF",
+                LoadNumber = "19289999-1",
+                DocumentTypes = new string[] { "Bill of Lading" }
+            };
+
             Response.ContentType = "application/json";
             Response.StatusCode = 200;
             return metadata;

@@ -1,38 +1,41 @@
-#Import-Module .\doc-downloader.functions.ps1
-
-$here = (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$src = Split-Path -Path $here -Parent
-. $src\doc-downloader.functions.ps1
-
-$BASE_URL = 'http://localhost:5000'
-
-$testfile = ($here + "\LogFile.txt")
-
-if((Test-Path $testfile) -ne $True){ 
-    New-Item -Path $testfile -ItemType File
-}
-
-$API_KEY = "Placeholder"
-
-$HEADERS = @{ Authorization = ("key=" + $API_KEY)
-                    Accept = 'application/json'}
-
 Describe "All Function Tests" {
+    BeforeAll {
+        $script:here = Split-Path -Parent $PSCommandPath
+        $script:src = Split-Path -Path $here -Parent
+        $functionsPath = Join-Path $src "doc-downloader.functions.ps1"
+        Write-Host "Dot-sourcing functions from: $functionsPath"
+        . $functionsPath
+
+        $envBaseUrl = $env:BASE_URL
+        if ($null -ne $envBaseUrl) {
+            $script:BASE_URL = $envBaseUrl
+        } else {
+            $script:BASE_URL = 'http://localhost:5000'
+        }
+
+        $script:testfile = Join-Path $here "LogFile.txt"
+        if((Test-Path $testfile) -ne $True){ 
+            New-Item -Path $testfile -ItemType File
+        }
+        $script:API_KEY = "Placeholder"
+        $script:HEADERS = @{ Authorization = ("Key key=" + $API_KEY); Accept = 'application/json'}
+        $script:LOG_FILE = $testfile
+    }
 
     Describe "Helper Function Tests" {
 
         Context 'Verifying helper functions produce correct output' {
             it 'CreateLogFile should produce a log filename corresponding to todays date' {
-                $path = $src + "\Tests\"
+                $path = Join-Path $src "Tests"
                 $filepath  = CreateLogFile $path
-                $filepath -like ($path + "Eleos-*log") | Should -Be $true
+                $filepath -like (Join-Path $path "Eleos-*log") | Should -Be $true
             }
     
             it 'CreateDownloadFile should produce filename with correct extension(zip)' { 
                 $URI = $BASE_URL + '/api/v1/documents/queued/1'
                 $queuedDoc = GetDocFromQueue $URI $HEADERS $LOG_FILE
                 $queuedDoc = $queuedDoc | ConvertFrom-Json
-                $filename = CreateDownloadFile $queuedDoc.downloadUrl $file_count
+                $filename = CreateDownloadFile $queuedDoc.downloadUrl 1
                 $filename -like "*.zip" | should -Be $true
             }
 
@@ -76,7 +79,7 @@ Describe "All Function Tests" {
                     GetNextDoc $request $HEADERS $testfile
                 }
                 catch {
-                    $exception = $_.CategoryInfo.Reason -eq 'WebException' 
+                    $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
                 }
                 $exception | Should -Be $true
             }
@@ -89,7 +92,7 @@ Describe "All Function Tests" {
                     $request = GetNextDoc $request $HEADERS $testfile -ErrorAction SilentlyContinue 
                 } 
                 catch {
-                    $exception = $_.CategoryInfo.Reason -eq "WebException"
+                    $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
                 }
                 $exception | Should -Be $true
             }
@@ -111,7 +114,7 @@ Describe "All Function Tests" {
                     $request = GetNextDoc $request $HEADERS $testfile -ErrorAction SilentlyContinue 
                 } 
                 catch {
-                    $exception = $_.CategoryInfo.Reason -eq 'WebException' 
+                    $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
                 }
                 $exception | Should -Be $true
             }
@@ -123,7 +126,7 @@ Describe "All Function Tests" {
                     $request = GetNextDoc $request $HEADERS $testfile -ErrorAction SilentlyContinue 
                 } 
                 catch {
-                    $exception = $_.CategoryInfo.Reason -eq 'WebException' 
+                    $exception = $_.Exception.Message -like "*WebException*" -or $_.Exception -is [System.Net.WebException]
                 }
                 $exception | Should -Be $true
             }

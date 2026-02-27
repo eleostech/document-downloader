@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/powershell:7.2-ubuntu-22.04
+
+# Install Pester module
+RUN pwsh -c "Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck"
+
+WORKDIR /app
+
+# Copy the script files and tests
+COPY doc-downloader.ps1 .
+COPY doc-downloader.functions.ps1 .
+COPY configurations.json .
+COPY Tests/ ./Tests/
+
+# Default command is just to keep the container alive or you can override it
+CMD ["pwsh"]
