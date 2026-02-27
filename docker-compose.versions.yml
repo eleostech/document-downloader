@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.mockserver
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/api/v1/documents/queued/next/empty"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:5000/api/v1/documents/queued/next/empty || powershell -ExecutionPolicy Bypass -Command \"Invoke-WebRequest -Uri http://127.0.0.1:5000/api/v1/documents/queued/next/empty -UseBasicParsing\""]
       interval: 3s
       timeout: 3s
       retries: 10
