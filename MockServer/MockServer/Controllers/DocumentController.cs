@@ -71,13 +71,16 @@ namespace MockServer.Controllers
         [Route("/api/v1/documents/queued/1")]
         public Metadata DownloadDoc()
         {
-            var directory = Environment.CurrentDirectory;
-            StreamReader r = new StreamReader(directory + @"\Payloads\payload.json");
-            string json = r.ReadToEnd();
-            var metadata = JsonConvert.DeserializeObject<Metadata>(json);
-            Response.ContentType = "application/json";
-            Response.StatusCode = 200;
-            return metadata;
+            var directory = AppContext.BaseDirectory;
+            var filePath = Path.Combine(directory, "Payloads", "payload.json");
+            using (StreamReader r = new StreamReader(filePath))
+            {
+                string json = r.ReadToEnd();
+                var metadata = JsonConvert.DeserializeObject<Metadata>(json);
+                Response.ContentType = "application/json";
+                Response.StatusCode = 200;
+                return metadata;
+            }
         }
 
         [HttpGet]

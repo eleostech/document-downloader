@@ -1,0 +1,9 @@
+ARG BASE_IMAGE=mcr.microsoft.com/powershell:7.4-ubuntu-22.04
+FROM ${BASE_IMAGE}
+
+WORKDIR /app
+COPY . .
+
+RUN pwsh -c "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser"
+
+ENTRYPOINT ["pwsh"]
