@@ -4,6 +4,6 @@ FROM ${BASE_IMAGE}
 WORKDIR /app
 COPY . .
 
-RUN pwsh -c "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser"
+RUN pwsh -c "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Pester -Force -Scope CurrentUser"
 
 ENTRYPOINT ["pwsh"]

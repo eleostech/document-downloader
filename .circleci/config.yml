@@ -17,7 +17,7 @@ jobs:
             $ProgressPreference = 'SilentlyContinue'
             Write-Host "Setting up Pester 5..."
             Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-            Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -MaximumVersion 5.9.9 -Scope CurrentUser
+            Install-Module -Name Pester -Repository PSGallery -Force -MaximumVersion 5.9.9 -Scope CurrentUser
             Import-Module Pester -MinimumVersion 5.0.0 -Force
             Write-Host "Using Pester version: $((Get-Module Pester).Version)"
             $pesterResult = Invoke-Pester -Path ./Tests/doc-downloader.Unit.Tests.ps1 -Output Detailed -PassThru
@@ -39,7 +39,7 @@ jobs:
             $ProgressPreference = 'SilentlyContinue'
             Write-Host "Setting up Pester 5..."
             Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-            Install-Module -Name Pester -Repository PSGallery -Force -SkipPublisherCheck -MaximumVersion 5.9.9 -Scope CurrentUser
+            Install-Module -Name Pester -Repository PSGallery -Force -MaximumVersion 5.9.9 -Scope CurrentUser
             Import-Module Pester -MinimumVersion 5.0.0 -Force
             Write-Host "Using Pester version: $((Get-Module Pester).Version)"
             docker build -t mock-server -f MockServer/Dockerfile .
