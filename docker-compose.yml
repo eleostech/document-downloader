@@ -8,7 +8,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:80
 
-  unit-ps6:
+  run-powershell-6-unit-tests:
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -16,7 +16,7 @@ services:
         BASE_IMAGE: mcr.microsoft.com/powershell:6.2.1-ubuntu-18.04
     command: ["-File", "Tests/wait-and-run.ps1", "-TestPath", "Tests/doc-downloader.Unit.Tests.ps1"]
 
-  unit-ps7:
+  run-powershell-7-unit-tests:
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -24,7 +24,7 @@ services:
         BASE_IMAGE: mcr.microsoft.com/powershell:7.4-ubuntu-22.04
     command: ["-File", "Tests/wait-and-run.ps1", "-TestPath", "Tests/doc-downloader.Unit.Tests.ps1"]
 
-  test-ps6:
+  run-powershell-6-integration-tests:
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -36,7 +36,7 @@ services:
       - MOCK_SERVER_URL=http://mock-server:80
     command: ["-File", "Tests/wait-and-run.ps1", "-MockServerUrl", "http://mock-server:80", "-TestPath", "Tests/doc-downloader.Integration.Tests.ps1"]
 
-  test-ps7:
+  run-powershell-7-integration-tests:
     build:
       context: .
       dockerfile: Dockerfile.test

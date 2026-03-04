@@ -51,7 +51,7 @@ jobs:
                 $attempts = 0
                 while (-not $ready -and $attempts -lt $maxAttempts) {
                     try {
-                        $response = Invoke-WebRequest -Uri "http://localhost:5000/api/v1/documents/queued/next" -ErrorAction SilentlyContinue
+                        $response = Invoke-WebRequest -Uri "http://localhost:5000/health" -ErrorAction SilentlyContinue
                         $ready = $true
                     } catch {
                         Start-Sleep -Seconds 2
@@ -80,7 +80,7 @@ jobs:
       - run:
           name: "Run PowerShell 6 Unit Tests"
           command: |
-            docker compose up unit-ps6 --build --exit-code-from unit-ps6
+            docker compose up run-powershell-6-unit-tests --build --exit-code-from run-powershell-6-unit-tests
 
   powershell-7-unit-tests:
     machine:
@@ -90,7 +90,7 @@ jobs:
       - run:
           name: "Run PowerShell 7 Unit Tests"
           command: |
-            docker compose up unit-ps7 --build --exit-code-from unit-ps7
+            docker compose up run-powershell-7-unit-tests --build --exit-code-from run-powershell-7-unit-tests
 
   powershell-6-integration-tests:
     machine:
@@ -100,7 +100,7 @@ jobs:
       - run:
           name: "Run PowerShell 6 Integration Tests"
           command: |
-            docker compose up test-ps6 --build --exit-code-from test-ps6
+            docker compose up run-powershell-6-integration-tests --build --exit-code-from run-powershell-6-integration-tests
 
   powershell-7-integration-tests:
     machine:
@@ -110,7 +110,7 @@ jobs:
       - run:
           name: "Run PowerShell 7 Integration Tests"
           command: |
-            docker compose up test-ps7 --build --exit-code-from test-ps7
+            docker compose up run-powershell-7-integration-tests --build --exit-code-from run-powershell-7-integration-tests
 
 workflows:
   verify:

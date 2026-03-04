@@ -11,7 +11,7 @@ if ($MockServerUrl) {
     while (-not $ready -and $attempts -lt $maxAttempts) {
         Write-Host "Waiting for mock server at $MockServerUrl..."
         try {
-            $response = Invoke-WebRequest -Uri "$MockServerUrl/api/v1/documents/queued/next" -ErrorAction SilentlyContinue
+            $response = Invoke-WebRequest -Uri "$MockServerUrl/health" -ErrorAction SilentlyContinue
             $ready = $true
         } catch {
             $ready = $false
