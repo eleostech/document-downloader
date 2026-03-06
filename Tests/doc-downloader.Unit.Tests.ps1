@@ -53,16 +53,6 @@ Describe "doc-downloader.functions Unit Tests" {
             $result | Should -BeLike "Eleos-*.zip"
         }
 
-        It "ExtractFilenameFromHeader handles valid download URI" {
-            # ExtractFilenameFromHeader uses [System.Net.WebRequest]::Create
-            # Mocking static .NET methods is hard in Pester. 
-            # In a true unit test, we should verify the logic that uses this function's output.
-            # But let's mock the underlying function if it's used by other functions.
-            # Since we are testing the function itself, let's skip the .NET mock 
-            # and focus on the other unit tests that ARE mockable.
-            
-            # (Skipping the direct .NET mock as it is unreliable in this environment)
-        }
     }
 
     Context "API Consumption with Mocking" {

@@ -20,9 +20,8 @@ Describe "doc-downloader.functions Integration Tests" {
         if (Test-Path $LOG_FILE) { Remove-Item $LOG_FILE }
     }
 
-    Context "Configuration Logic" {
+    Context "Authentication" {
         It "Uses standard Eleos header when drive_axle_customer is false" {
-            # Simulate the logic in doc-downloader.ps1
             $API_KEY = "test-key"
             $DRIVE_AXLE = $false
             
@@ -34,7 +33,6 @@ Describe "doc-downloader.functions Integration Tests" {
         }
 
         It "Uses Drive Axle header when drive_axle_customer is true" {
-            # Simulate the logic in doc-downloader.ps1
             $API_KEY = "test-key"
             $DRIVE_AXLE = $true
             
@@ -44,9 +42,7 @@ Describe "doc-downloader.functions Integration Tests" {
             
             $HEADERS.Authorization | Should -Be "DriveAxleKey key=test-key"
         }
-    }
 
-    Context "Authentication and Header Support" {
         It "GetNextDoc works with standard Eleos header (Key key=...)" -Skip:($PSVersionTable.PSVersion.Major -eq 6) {
             $headers = @{ 
                 Authorization = "Key key=$global:API_KEY"
