@@ -1,139 +1,109 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MockServer.Models;
 using Newtonsoft.Json;
-
+using System.Linq;
 
 namespace MockServer.Controllers
 {
     [ApiController]
-    [Route("/api/v1/documents/queued/")]
+    [Route("/api/v1/documents/queued")]
     public class DocumentController : ControllerBase
     {
-        [HttpDelete]
-        [Route("/api/v1/documents/queued/1")]
-        public Object Delete200()
+        private bool ValidateAuth()
         {
-            Response.StatusCode = 200;
-            Response.ContentType = "application/json";
-            Dictionary<string, string> response = new Dictionary<string, string>();
-            response.Add("message", "Document deleted successfully.");
-            return response;
+            if (!Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                return false;
+            }
+
+            var auth = authHeader.FirstOrDefault();
+            if (string.IsNullOrEmpty(auth))
+            {
+                return false;
+            }
+
+            return auth.StartsWith("Key key=") || auth.StartsWith("DriveAxleKey key=");
         }
 
-        [Route("/api/v1/documents/queued/2")]
-        public string Delete404()
+        [HttpGet("/health")]
+        public IActionResult Health()
         {
-            Response.StatusCode = 404;
-            Response.ContentType = "application/json";
-            return "Error removing document.";
+            return Ok("Ready");
         }
 
-        [Route("/api/v1/documents/queued/3")]
-        public string Delete500()
+        [HttpGet("next")]
+        public IActionResult FetchNext()
         {
-            Response.StatusCode = 500;
-            Response.ContentType = "application/json";
-            return "Internal server error";
-        }
+            if (!ValidateAuth()) return Unauthorized();
 
-        [HttpGet]
-        [Route("/api/v1/documents/queued/next")]
-        public void FetchNextSuccess()
-        {
-            Response.StatusCode = 302;
+            // Support a special header or query to simulate empty queue
+            if (Request.Headers.ContainsKey("X-Simulate-Empty"))
+            {
+                return StatusCode(304);
+            }
+
             Response.Headers.Add("Location", "/api/v1/documents/queued/1");
+            return StatusCode(302);
         }
 
-        [Route("/api/v1/documents/queued/next/empty")]
-        public Object FetchNextEmpty()
-        { 
-            Response.StatusCode = 304;
-            Response.ContentType = "application/json";
-            return null;
-        }
-
-        [Route("/api/v1/documents/queued/next/fail")]
-        public void FetchNextFail()
+        [HttpGet("next/empty")]
+        public IActionResult FetchNextEmpty()
         {
-            Response.StatusCode = 404;
+            if (!ValidateAuth()) return Unauthorized();
+            return StatusCode(304);
         }
 
-        [Route("/api/v1/documents/queued/next/badserver")]
-        public void FetchNextBadServer()
+        [HttpGet("{id}")]
+        public IActionResult GetDocument(string id)
         {
-            Response.StatusCode = 500;
+            if (!ValidateAuth()) return Unauthorized();
+
+            if (id == "2") return NotFound();
+
+            var directory = AppContext.BaseDirectory;
+            var filePath = Path.Combine(directory, "Payloads", "payload.json");
+            
+            if (!System.IO.File.Exists(filePath))
+            {
+                return StatusCode(500, "Payload file not found.");
+            }
+
+            using (StreamReader r = new StreamReader(filePath))
+            {
+                string json = r.ReadToEnd();
+                var metadata = JsonConvert.DeserializeObject<Metadata>(json);
+                return Ok(metadata);
+            }
         }
 
-        [HttpGet]
-        [Route("/api/v1/documents/queued/1")]
-        public Metadata DownloadDoc()
+        [HttpDelete("{id}")]
+        public IActionResult DeleteDocument(string id)
         {
-            var directory = Environment.CurrentDirectory;
-            StreamReader r = new StreamReader(directory + @"\Payloads\payload.json");
-            string json = r.ReadToEnd();
-            var metadata = JsonConvert.DeserializeObject<Metadata>(json);
-            Response.ContentType = "application/json";
-            Response.StatusCode = 200;
-            return metadata;
+            if (!ValidateAuth()) return Unauthorized();
+
+            if (id == "2") return NotFound();
+
+            return Ok(new { message = "Document deleted successfully." });
         }
 
-        [HttpGet]
-        [Route("/api/v1/documents/queued/2")]
-        public void DocNotFound()
-        { 
-            Response.ContentType = "application/json";
-            Response.StatusCode = 404;
-        }
-
-        [HttpGet]
-        [Route("/api/v1/documents/queued/3")]
-        public void BadServer()
-        {
-            Response.ContentType = "application/json";
-            Response.StatusCode = 500;
-        }
-
-        [HttpGet]
-        [Route("/api/download/mock_server_file.png")]
-        public void HeaderResponse()
-        {
-            var headers = Response.Headers;
-        }
-
-        [HttpGet]
-        [Route("/api/download/validHeader")]
-         public void ValidHeader()
+        // Additional endpoints for filename extraction tests
+        [HttpGet("/api/download/validHeader")]
+        public IActionResult ValidHeader()
         {
             var contentDisposition = "form-data; name=\"filename = \"; filename=\"filename.jpg\"";
             Response.Headers.Add("Content-Disposition", contentDisposition);
+            return Ok();
         }
 
-        [HttpGet]
-        [Route("/api/download/multipledelimeter")]
-        public void MultipleDelimeter()
+        [HttpGet("/api/download/multipledelimeter")]
+        public IActionResult MultipleDelimeter()
         {
             var contentDisposition = "form-data; name=\"filename = \"; filename=\"_NA__NA__; 2020-09.zip\"";
             Response.Headers.Add("Content-Disposition", contentDisposition);
-        }
-
-        [HttpGet]
-        [Route("/api/content-disp/somefile.tif")]
-
-        public void ContentDispositon()
-        {
-            var filename = @"""file.tif""";
-            var contentDisp = "aaaaaaaaaaaa filename=" + filename;
-            Response.Headers.Add("Content-Disposition", contentDisp);
-        }
-
-        [HttpGet]
-        [Route("/api/badheader")]
-        public void BadHeader()
-        {
-
+            return Ok();
         }
     }
 }

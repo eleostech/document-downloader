@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mock-server:
+    build:
+      context: .
+      dockerfile: MockServer/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+
+  run-powershell-6-unit-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+      args:
+        BASE_IMAGE: mcr.microsoft.com/powershell:6.2.1-ubuntu-18.04
+    command: ["-File", "Tests/wait-and-run.ps1", "-TestPath", "Tests/doc-downloader.Unit.Tests.ps1"]
+
+  run-powershell-7-unit-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+      args:
+        BASE_IMAGE: mcr.microsoft.com/powershell:7.4-ubuntu-22.04
+    command: ["-File", "Tests/wait-and-run.ps1", "-TestPath", "Tests/doc-downloader.Unit.Tests.ps1"]
+
+  run-powershell-6-integration-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+      args:
+        BASE_IMAGE: mcr.microsoft.com/powershell:6.2.1-ubuntu-18.04
+    depends_on:
+      - mock-server
+    environment:
+      - MOCK_SERVER_URL=http://mock-server:80
+    command: ["-File", "Tests/wait-and-run.ps1", "-MockServerUrl", "http://mock-server:80", "-TestPath", "Tests/doc-downloader.Integration.Tests.ps1"]
+
+  run-powershell-7-integration-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+      args:
+        BASE_IMAGE: mcr.microsoft.com/powershell:7.4-ubuntu-22.04
+    depends_on:
+      - mock-server
+    environment:
+      - MOCK_SERVER_URL=http://mock-server:80
+    command: ["-File", "Tests/wait-and-run.ps1", "-MockServerUrl", "http://mock-server:80", "-TestPath", "Tests/doc-downloader.Integration.Tests.ps1"]
