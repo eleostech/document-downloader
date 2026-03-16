@@ -121,3 +121,12 @@ workflows:
       - powershell-7-unit-tests
       - powershell-6-integration-tests
       - powershell-7-integration-tests
+
+nightly:
+  triggers:
+  - schedule:
+      cron: "0 8 * * *"
+      filters:
+        branches:
+          only:
+            - master
