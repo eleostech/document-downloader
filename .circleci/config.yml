@@ -1,95 +1,127 @@
 version: 2.1
 
 orbs:
-  # If you update this value, be sure to check that build_powershell_five is still getting Powershell 5
-  win: circleci/windows@2.2.0
-
-commands:
-  powershell_version_setup:
-    parameters:
-      powershell_setup_steps:
-        description: setup steps needed for the configured powershell version to run
-        type: steps
-        default: []
-    steps:
-      - steps: << parameters.powershell_setup_steps >>
-        
-  run_tests:
-    steps:
-      - run: |
-          $module = "C:\Program Files\WindowsPowerShell\Modules\Pester"
-          takeown /F $module /A /R
-          icacls $module /reset
-          icacls $module /grant "*S-1-5-32-544:F" /inheritance:d /T
-          Remove-Item -Path $module -Recurse -Force -Confirm:$false
-      - run: |
-          Install-Module -Name Pester -Force  
-          Get-Host | Select-Object Version 
-          dotnet build C:\Users\circleci\project\MockServer\MockServer 
-          $job = start-job {dotnet run --project C:\Users\circleci\project\MockServer\MockServer}
-          Start-Sleep 10
-          .\Tests\doc-downloader.tests.ps1
-          .\Tests\drive-axle-doc-downloader.tests.ps1
+  windows: circleci/windows@5.0
 
 jobs:
-  build_powershell_five:
+  powershell-5-unit-tests:
     executor:
-      name: win/default
-      shell: powershell.exe
+      name: windows/default
+      size: "medium"
     steps:
       - checkout
-      - run_tests
-  build_powershell_six:
-    executor:
-      name: win/default
-      shell: powershell.exe
-    steps:
-      - checkout
-      - powershell_version_setup:
-          powershell_setup_steps:
-            - run: |
-                choco install powershell-core
-                choco uninstall powershell-core
-                choco install powershell-core --version=6.2.4
-                cd 'C:\Program Files\PowerShell\6'
-                .\pwsh.exe
-      - run_tests
-  build_powershell_seven:
-    executor:
-      name: win/default
-      shell: powershell.exe
-    steps:
-      - checkout
-      - powershell_version_setup:
-          powershell_setup_steps:
-            - run: |
-                choco install powershell-core --version=7.3.0
-                pwsh.exe
-      - run_tests
-  store_artifacts:
-    executor:
-      name: win/default
-      shell: powershell.exe
-    steps:
-      - checkout
-      - run: |
-          Write-Host (Split-Path -Path $PSScriptRoot)
-          $ProgressPreference = 'SilentlyContinue';
-          Compress-Archive -Path "C:\Users\circleci\project\README.txt", "C:\Users\circleci\project\configurations.json", "C:\Users\circleci\project\*.ps1" -DestinationPath document-downloader.zip
-      - store_artifacts:
-          path: document-downloader.zip
-          destination: document-downloader.zip
+      - run:
+          name: "Install Pester 5 and Run Unit Tests"
+          shell: powershell.exe
+          command: |
+            $ProgressPreference = 'SilentlyContinue'
+            Write-Host "Setting up Pester 5..."
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+            Install-Module -Name Pester -Repository PSGallery -Force -MaximumVersion 5.9.9 -Scope CurrentUser
+            Import-Module Pester -MinimumVersion 5.0.0 -Force
+            Write-Host "Using Pester version: $((Get-Module Pester).Version)"
+            $pesterResult = Invoke-Pester -Path ./Tests/doc-downloader.Unit.Tests.ps1 -Output Detailed -PassThru
+            if ($pesterResult.FailedCount -gt 0) {
+                Write-Error "Unit tests failed!"
+                exit 1
+            }
 
+  powershell-5-integration-tests:
+    executor:
+      name: windows/default
+      size: "medium"
+    steps:
+      - checkout
+      - run:
+          name: "Build Mock Server and Run Integration Tests"
+          shell: powershell.exe
+          command: |
+            $ProgressPreference = 'SilentlyContinue'
+            Write-Host "Setting up Pester 5..."
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+            Install-Module -Name Pester -Repository PSGallery -Force -MaximumVersion 5.9.9 -Scope CurrentUser
+            Import-Module Pester -MinimumVersion 5.0.0 -Force
+            Write-Host "Using Pester version: $((Get-Module Pester).Version)"
+            docker build -t mock-server -f MockServer/Dockerfile .
+            docker run -d --name mock-server -p 5000:80 -e ASPNETCORE_URLS=http://+:80 mock-server
+            try {
+                Write-Host "Waiting for mock server..."
+                $ready = $false
+                $maxAttempts = 30
+                $attempts = 0
+                while (-not $ready -and $attempts -lt $maxAttempts) {
+                    try {
+                        $response = Invoke-WebRequest -Uri "http://localhost:5000/health" -ErrorAction SilentlyContinue
+                        $ready = $true
+                    } catch {
+                        Start-Sleep -Seconds 2
+                        $attempts++
+                    }
+                }
+                if (-not $ready) {
+                    throw "Mock server failed to start in time."
+                }
+                Write-Host "Mock server is ready. Running tests..."
+                $pesterResult = Invoke-Pester -Path ./Tests/doc-downloader.Integration.Tests.ps1 -Output Detailed -PassThru
+                if ($pesterResult.FailedCount -gt 0) {
+                    Write-Error "Tests failed!"
+                    exit 1
+                }
+            }
+            finally {
+                docker rm -f mock-server
+            }
+
+  powershell-6-unit-tests:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: "Run PowerShell 6 Unit Tests"
+          command: |
+            docker compose up run-powershell-6-unit-tests --build --exit-code-from run-powershell-6-unit-tests
+
+  powershell-7-unit-tests:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: "Run PowerShell 7 Unit Tests"
+          command: |
+            docker compose up run-powershell-7-unit-tests --build --exit-code-from run-powershell-7-unit-tests
+
+  powershell-6-integration-tests:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: "Run PowerShell 6 Integration Tests"
+          command: |
+            docker compose up run-powershell-6-integration-tests --build --exit-code-from run-powershell-6-integration-tests
+
+  powershell-7-integration-tests:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: "Run PowerShell 7 Integration Tests"
+          command: |
+            docker compose up run-powershell-7-integration-tests --build --exit-code-from run-powershell-7-integration-tests
 
 workflows:
-  version: 2
-  build_with_powershell_versions:
+  verify:
     jobs:
-      - build_powershell_five
-      - build_powershell_six
-      - build_powershell_seven
-      - store_artifacts
-          
+      - powershell-5-unit-tests
+      - powershell-5-integration-tests
+      - powershell-6-unit-tests
+      - powershell-7-unit-tests
+      - powershell-6-integration-tests
+      - powershell-7-integration-tests
+
 nightly:
   triggers:
   - schedule:
