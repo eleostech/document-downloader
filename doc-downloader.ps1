@@ -1,5 +1,6 @@
 $Config = Get-Content "configurations.json" | ConvertFrom-Json
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 ###  Configuration variables found in configurations.json
 $API_KEY = $Config.api_key
@@ -72,7 +73,7 @@ do{
             $redirect = $BASE_URL + $response.Headers["Location"]
             WriteToLog ("Redirecting to URL " + $redirect) $log_file
             $queuedDoc = GetDocFromQueue $redirect $HEADERS $log_file
-            $queuedDoc = $queuedDoc | ConvertFrom-Json
+            $queuedDoc = $queuedDoc | ConvertFrom-Json -AsHashtable
             $downloadURI = $queuedDoc.download_url
             WriteToLog ("Downloading Document from " + $downloadURI) $log_file
             $file_count++
